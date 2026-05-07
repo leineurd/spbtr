@@ -1,0 +1,2360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Sweet Potatoes by the River</title>
+<meta name="theme-color" content="#4A9DC4">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Sweet Potatoes">
+<link rel="apple-touch-icon" id="pwa-icon">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sky:#6BBDE0; --sky2:#4A9DC4;
+  --grass:#4CB830; --grass2:#2E8010;
+  --cream:#FFF0C0; --ink:#28100A;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'VT323',monospace;}
+
+/* ── SCREENS ─────────────────────────────── */
+.screen{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;}
+.screen.active{display:flex;}
+
+/* ── PIXEL WOOD BUTTON ───────────────────── */
+.btn{
+  font-family:'VT323',monospace;font-size:19px;letter-spacing:.5px;
+  color:var(--cream);cursor:pointer;border:none;outline:none;
+  background:#8B4A18;
+  border-top:3px solid #CC7A3A;border-left:3px solid #CC7A3A;
+  border-right:3px solid #2E0C00;border-bottom:3px solid #2E0C00;
+  padding:8px 18px;
+  box-shadow:0 5px 0 #1a0800,inset 0 1px 0 rgba(255,200,100,.15);
+  transition:transform .07s,box-shadow .07s;
+}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #1a0800;border-top-color:#2E0C00;border-left-color:#2E0C00;border-right-color:#CC7A3A;border-bottom-color:#CC7A3A;}
+.btn:disabled{opacity:.38;pointer-events:none;}
+.btn.lg{font-size:26px;padding:13px 42px;}
+.btn.sm{font-size:17px;padding:6px 14px;}
+.btn.blue{background:#186898;color:#DDF0FF;border-top-color:#5ABCE2;border-left-color:#5ABCE2;border-right-color:#082840;border-bottom-color:#082840;box-shadow:0 5px 0 #040e18;}
+.btn.blue:active{box-shadow:0 1px 0 #040e18;border-top-color:#082840;border-left-color:#082840;border-right-color:#5ABCE2;border-bottom-color:#5ABCE2;}
+.btn.gold{background:#B88A00;color:#2A1400;border-top-color:#FFD700;border-left-color:#FFD700;border-right-color:#604800;border-bottom-color:#604800;box-shadow:0 5px 0 #302400;}
+.btn.gold:active{box-shadow:0 1px 0 #302400;border-top-color:#604800;border-left-color:#604800;border-right-color:#FFD700;border-bottom-color:#FFD700;}
+.btn.red{background:#8A1818;color:#FFDDDD;border-top-color:#E04444;border-left-color:#E04444;border-right-color:#300000;border-bottom-color:#300000;box-shadow:0 5px 0 #180000;}
+.btn.red:active{box-shadow:0 1px 0 #180000;}
+.btn.dim{background:#304050;color:#7AABB8;border-top-color:#506880;border-left-color:#506880;border-right-color:#101820;border-bottom-color:#101820;box-shadow:0 5px 0 #080e14;opacity:.7;}
+.btn.walk{background:#3A6828;color:#D8F0C0;border-top-color:#6AAA48;border-left-color:#6AAA48;border-right-color:#142808;border-bottom-color:#142808;box-shadow:0 5px 0 #0A1804;}
+.btn.walk:active{box-shadow:0 1px 0 #0A1804;border-top-color:#142808;border-left-color:#142808;border-right-color:#6AAA48;border-bottom-color:#6AAA48;}
+.btn.greenhouse{background:#286858;color:#C0E8DF;border-top-color:#50A898;border-left-color:#50A898;border-right-color:#0A2820;border-bottom-color:#0A2820;box-shadow:0 5px 0 #061410;}
+.btn.greenhouse:active{box-shadow:0 1px 0 #061410;border-top-color:#0A2820;border-left-color:#0A2820;border-right-color:#50A898;border-bottom-color:#50A898;}
+.btn.active-river{background:#186898;color:#DDF0FF;border-top-color:#5ABCE2;border-left-color:#5ABCE2;border-right-color:#082840;border-bottom-color:#082840;box-shadow:0 5px 0 #040e18;animation:riverGlow .55s ease-in-out infinite alternate;}
+@keyframes riverGlow{from{box-shadow:0 5px 0 #040e18,0 0 8px rgba(90,188,226,.5);}to{box-shadow:0 5px 0 #040e18,0 0 30px rgba(90,188,226,1),0 0 55px rgba(90,188,226,.4);}}
+
+/* ── PANEL ───────────────────────────────── */
+.panel{background:var(--cream);border-top:3px solid #EED880;border-left:3px solid #EED880;border-right:3px solid #7A5A10;border-bottom:3px solid #7A5A10;box-shadow:5px 5px 0 rgba(0,0,0,.45);padding:18px 16px;width:min(340px,92vw);}
+
+/* ── START SCREEN ────────────────────────── */
+#s-start{background:linear-gradient(180deg,var(--sky) 0%,var(--sky2) 50%,#3A9020 50%,#3A9020 52%,var(--grass) 52%,var(--grass2) 100%);}
+.cloud{position:absolute;background:#fff;opacity:.88;image-rendering:pixelated;}
+.start-potato{animation:bob 2.5s ease-in-out infinite;display:inline-block;}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-18px) rotate(4deg)}}
+.start-title{font-family:'Press Start 2P',monospace;font-size:clamp(8px,3vw,11px);color:var(--ink);text-align:center;line-height:1.9;text-shadow:2px 2px 0 rgba(255,255,255,.4);}
+.start-by{font-family:'VT323',monospace;font-size:21px;color:#5A2A08;}
+
+/* ── FARM SCREEN ─────────────────────────── */
+#s-farm{background:linear-gradient(180deg,var(--sky) 0%,var(--sky2) 25%,#2A7010 25%,#2A7010 27%,var(--grass) 27%,var(--grass2) 100%);justify-content:flex-start;align-items:center;padding:6px 8px 8px;gap:5px;overflow-y:auto;}
+.farm-hdr{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--ink);text-align:center;line-height:2;text-shadow:1px 1px 0 rgba(255,255,255,.35);}
+.counters{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;}
+.ctr{background:#FFF8D8;border-top:2px solid #EED880;border-left:2px solid #EED880;border-right:2px solid #7A5A10;border-bottom:2px solid #7A5A10;padding:3px 9px;text-align:center;min-width:60px;}
+.ctr b{display:block;font-family:'VT323',monospace;font-size:30px;color:var(--ink);line-height:1;}
+.ctr span{font-family:'VT323',monospace;font-size:15px;color:#6A3A10;}
+.sp-row{display:flex;gap:8px;}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;width:min(300px,93vw);}
+.tile{aspect-ratio:1;cursor:pointer;position:relative;background:radial-gradient(ellipse at 32% 28%,#A06540 0%,transparent 55%),radial-gradient(ellipse at 68% 72%,#5A2E10 0%,transparent 50%),#7A4420;border-top:3px solid #A06030;border-left:3px solid #A06030;border-right:3px solid #280E00;border-bottom:3px solid #280E00;box-shadow:inset 0 2px 6px rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;transition:border-color .12s;}
+.tile.sel{border-top-color:#FFD700;border-left-color:#FFD700;border-right-color:#B09000;border-bottom-color:#B09000;box-shadow:inset 0 2px 6px rgba(0,0,0,.55),0 0 14px rgba(255,215,0,.8);}
+.tile:active{filter:brightness(.82);}
+.tile-prog{position:absolute;bottom:2px;right:3px;font-family:'VT323',monospace;font-size:12px;background:rgba(0,0,0,.7);color:#FFD700;padding:0 3px;line-height:1.4;}
+.wdots{position:absolute;top:3px;left:3px;display:flex;gap:2px;flex-wrap:wrap;width:calc(100% - 6px);}
+.wd{width:5px;height:5px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);}
+.wd.on{background:#5ABCE2;border-color:#8ADEFF;}
+#golden-cat-farm{display:none;flex-direction:row;gap:4px;justify-content:center;flex-wrap:wrap;width:min(300px,93vw);}
+.act-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;width:min(300px,93vw);}
+.act-grid .btn{font-size:15px;padding:8px 6px;}
+
+/* ── RIVER SCREEN ────────────────────────── */
+#s-river{background:#0D2035;overflow:hidden;cursor:pointer;}
+#flappy-canvas{display:block;position:absolute;inset:0;touch-action:none;}
+
+/* ── SHOP SCREEN ─────────────────────────── */
+#s-shop{background:linear-gradient(180deg,#D4B860 0%,#EED080 35%,#C8A040 100%);justify-content:flex-start;overflow-y:auto;padding:10px;}
+.shop-inner{width:min(340px,92vw);margin:0 auto;padding-bottom:16px;}
+.shop-hdr{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--ink);text-align:center;margin-bottom:10px;line-height:2;}
+.tab-row{display:flex;margin-bottom:10px;border-bottom:3px solid #8A6A10;}
+.tab-btn{font-family:'VT323',monospace;font-size:20px;cursor:pointer;border:none;padding:5px 22px;background:rgba(100,70,10,.2);color:#7A5010;flex:1;}
+.tab-btn.active{background:rgba(255,240,160,.85);color:#2A1000;border-bottom:3px solid #8A6A10;margin-bottom:-3px;}
+.shop-item{display:flex;align-items:center;justify-content:space-between;background:rgba(255,240,160,.65);border-top:2px solid #EED870;border-left:2px solid #EED870;border-right:2px solid #806820;border-bottom:2px solid #806820;padding:8px 12px;margin-bottom:7px;gap:8px;}
+.shop-info{font-family:'VT323',monospace;font-size:17px;color:var(--ink);}
+.shop-info strong{display:block;font-family:'VT323',monospace;font-size:20px;color:#4A2400;}
+.shop-special-item{display:flex;align-items:center;justify-content:space-between;background:rgba(255,240,60,.45);border-top:2px solid #FFD700;border-left:2px solid #FFD700;border-right:2px solid #806820;border-bottom:2px solid #806820;padding:8px 12px;margin-bottom:7px;gap:8px;}
+
+/* ── SECRET SCREEN ───────────────────────── */
+#s-secret{background:linear-gradient(180deg,#0A0816 0%,#1A1030 35%,#2A1848 60%,#1A2A18 100%);justify-content:flex-end;padding-bottom:0;overflow:hidden;}
+.secret-stars{position:absolute;inset:0;pointer-events:none;}
+.secret-figure{position:absolute;bottom:38%;left:50%;transform:translateX(-50%);z-index:2;}
+.dialogue-box{width:100%;background:rgba(10,6,20,.95);border-top:3px solid #8070A8;padding:18px 20px 18px;position:relative;z-index:10;min-height:40%;display:flex;flex-direction:column;justify-content:space-between;gap:10px;}
+.dialogue-name{font-family:'Press Start 2P',monospace;font-size:7px;color:#B0A0D8;margin-bottom:8px;letter-spacing:2px;}
+.dialogue-text{font-family:'VT323',monospace;font-size:22px;color:#E8E0F8;line-height:1.55;flex:1;}
+.dialogue-hint{font-family:'VT323',monospace;font-size:16px;color:rgba(160,150,200,.55);text-align:right;animation:blink 1.1s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:.4}50%{opacity:1}}
+
+/* ── TIME TRAVEL OVERLAY TEXT ────────────── */
+.tt-text{font-family:'VT323',monospace;font-size:18px;color:#3A1800;line-height:1.7;margin-bottom:16px;}
+
+/* ── OVERLAYS ────────────────────────────── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:200;}
+.overlay.on{display:flex;}
+
+/* ── TOAST ───────────────────────────────── */
+#toast{position:fixed;top:12px;left:50%;transform:translateX(-50%) translateY(-80px);background:rgba(18,6,0,.95);color:var(--cream);font-family:'VT323',monospace;font-size:22px;padding:6px 18px;border-top:2px solid #C8A050;border-left:2px solid #C8A050;border-right:2px solid #5A3A00;border-bottom:2px solid #5A3A00;z-index:500;transition:transform .26s;white-space:nowrap;pointer-events:none;}
+#toast.show{transform:translateX(-50%) translateY(0);}
+
+/* ── OVERWORLD SCREEN ─────────────────────── */
+#s-overworld{background:#2A6E10;overflow:hidden;}
+#ow-canvas{display:block;position:absolute;inset:0;touch-action:none;}
+#ow-hdr{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-family:'Press Start 2P',monospace;font-size:8px;color:#FFF0C0;text-shadow:2px 2px 0 rgba(0,0,0,.6);z-index:10;letter-spacing:2px;pointer-events:none;}
+#ow-river-btn{position:absolute;top:38px;left:8px;z-index:15;}
+#ow-back-btn{position:absolute;top:38px;right:8px;z-index:15;}
+#ow-interact-wrap{position:absolute;bottom:34%;left:0;right:0;display:flex;justify-content:center;z-index:15;pointer-events:none;}
+#ow-interact-btn{pointer-events:auto;display:none;}
+.ow-joystick-base{position:absolute;bottom:48px;left:40px;width:90px;height:90px;border-radius:50%;background:rgba(0,0,0,.22);border:2px solid rgba(255,255,255,.2);z-index:15;touch-action:none;user-select:none;}
+.ow-joystick-knob{position:absolute;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.38);border:2px solid rgba(255,255,255,.55);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;}
+#ow-quote-panel{position:absolute;bottom:0;left:0;right:0;background:rgba(18,8,0,.96);border-top:3px solid #C8A050;padding:16px 18px 20px;z-index:20;display:none;max-height:52%;}
+.ow-quote-name{font-family:'Press Start 2P',monospace;font-size:6px;color:#C8A050;margin-bottom:10px;letter-spacing:2px;}
+.ow-quote-text{font-family:'VT323',monospace;font-size:20px;color:#FFF0C0;line-height:1.55;overflow-y:auto;max-height:120px;}
+/* ── CAVE SCREEN ──────────────────────────── */
+#s-cave{background:linear-gradient(180deg,#080808 0%,#14100A 40%,#1A1408 100%);overflow:hidden;}
+#cave-canvas{display:block;position:absolute;inset:0;pointer-events:none;}
+#cave-hdr{position:absolute;top:12px;left:50%;transform:translateX(-50%);font-family:'Press Start 2P',monospace;font-size:8px;color:#A09060;letter-spacing:3px;z-index:10;text-shadow:0 0 8px rgba(160,144,96,.7);}
+#cave-back-btn{position:absolute;top:38px;right:8px;z-index:15;}
+#cave-panel{position:absolute;bottom:0;left:0;right:0;background:rgba(8,6,0,.97);border-top:3px solid #806840;padding:16px 18px 22px;z-index:20;}
+.cave-name{font-family:'Press Start 2P',monospace;font-size:6px;color:#A09060;margin-bottom:10px;letter-spacing:2px;}
+.cave-text{font-family:'VT323',monospace;font-size:21px;color:#E8D8A0;line-height:1.55;margin-bottom:12px;}
+.cave-input{font-family:'VT323',monospace;font-size:22px;background:#1A1408;color:#E8D8A0;border:2px solid #806840;padding:6px 12px;width:100%;margin-bottom:10px;outline:none;}
+.cave-row{display:flex;gap:8px;flex-wrap:wrap;}
+/* ── LETTER ENVELOPE ─────────────────────── */
+#letter-envelope{position:absolute;top:46px;right:10px;z-index:50;cursor:pointer;display:none;}
+#letter-envelope.dim{filter:grayscale(1) brightness(0.7);opacity:0.5;animation:none;}
+#letter-envelope.glow{animation:envGlow .9s ease-in-out infinite alternate;}
+@keyframes envGlow{from{filter:drop-shadow(0 0 4px rgba(255,215,0,.7));}to{filter:drop-shadow(0 0 18px rgba(255,215,0,1));}}
+.four-btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;width:min(300px,93vw);}
+.four-btn-grid .btn{font-size:13px;padding:9px 4px;text-align:center;}
+#s-greenhouse{background:#C8EAB0;overflow:hidden;}
+#gh-canvas{display:block;position:absolute;inset:0;pointer-events:none;}
+#gh-hdr{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-family:'Press Start 2P',monospace;font-size:8px;color:#1A4208;letter-spacing:2px;z-index:10;pointer-events:none;}
+#gh-back-btn{position:absolute;top:38px;right:8px;z-index:15;}
+#gh-pots-layer{position:absolute;inset:0;z-index:5;}
+#gh-pot-panel{position:absolute;bottom:0;left:0;right:0;background:rgba(16,30,6,.97);border-top:3px solid #6A9840;padding:12px 16px 20px;z-index:20;display:none;}
+.gh-panel-title{font-family:'Press Start 2P',monospace;font-size:7px;color:#A8D878;margin-bottom:10px;letter-spacing:2px;}
+#s-gh-store{background:linear-gradient(180deg,#B8E8A0 0%,#8CC870 100%);justify-content:flex-start;overflow-y:auto;padding:10px;}
+.gh-slot{width:76px;height:76px;border-top:2px solid #EED880;border-left:2px solid #EED880;border-right:2px solid #7A5A10;border-bottom:2px solid #7A5A10;background:#FFF8D8;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-direction:column;gap:3px;padding:4px;}
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<!-- ══════════════════════════════════════════
+     START SCREEN
+     ══════════════════════════════════════════ -->
+<div class="screen active" id="s-start">
+  <div class="cloud" style="width:8px;height:8px;top:9%;left:8%;box-shadow:8px 0 0 #fff,16px 0 0 #fff,24px 0 0 #fff,32px 0 0 #fff,-8px 8px 0 #fff,0 8px 0 #fff,8px 8px 0 #fff,16px 8px 0 #fff,24px 8px 0 #fff,32px 8px 0 #fff,40px 8px 0 #fff,0 -8px 0 #fff,8px -8px 0 #fff,16px -8px 0 #fff,24px -8px 0 #fff"></div>
+  <div class="cloud" style="width:8px;height:8px;top:6%;right:12%;box-shadow:8px 0 0 #fff,16px 0 0 #fff,24px 0 0 #fff,0 8px 0 #fff,8px 8px 0 #fff,16px 8px 0 #fff,24px 8px 0 #fff,32px 8px 0 #fff,8px -8px 0 #fff,16px -8px 0 #fff"></div>
+  <div class="cloud" style="width:8px;height:8px;top:19%;left:38%;box-shadow:8px 0 0 #fff,16px 0 0 #fff,0 8px 0 #fff,8px 8px 0 #fff,16px 8px 0 #fff,24px 8px 0 #fff,8px -8px 0 #fff"></div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:8px;z-index:1">
+    <div class="start-potato">
+      <svg viewBox="0 0 16 16" width="108" height="108" style="image-rendering:pixelated;shape-rendering:crispEdges" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="1" width="6" height="2" fill="#5ABE48"/>
+        <rect x="3" y="2" width="10" height="3" fill="#3A9030"/>
+        <rect x="2" y="3" width="12" height="3" fill="#226818"/>
+        <rect x="3" y="5" width="10" height="2" fill="#2E7822"/>
+        <rect x="3" y="6" width="10" height="5" fill="#D4700E"/>
+        <rect x="2" y="7" width="12" height="4" fill="#C05808"/>
+        <rect x="3" y="11" width="10" height="2" fill="#A04000"/>
+        <rect x="5" y="8" width="2" height="2" fill="#F39C12"/>
+        <rect x="9" y="9" width="2" height="2" fill="#F39C12"/>
+        <rect x="7" y="7" width="2" height="2" fill="#EAA020"/>
+      </svg>
+    </div>
+    <p class="start-title">Sweet Potatoes<br>by the River</p>
+    <p class="start-by">— by Len —</p>
+    <div style="height:10px"></div>
+    <button class="btn lg" id="begin-btn" onclick="startGame()">BEGIN</button>
+    <button class="btn sm" id="continue-btn" style="display:none;margin-top:4px" onclick="continueGame()">CONTINUE</button>
+    <button class="btn sm" style="margin-top:4px" onclick="openOverlay('ov-settings')">SETTINGS</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     FARM SCREEN
+     ══════════════════════════════════════════ -->
+<div class="screen" id="s-farm">
+  <p class="farm-hdr">Sweet Potatoes<br>by the River</p>
+  <div class="counters">
+    <div class="ctr"><b id="c-water">1</b><span>Water</span></div>
+    <div class="ctr"><b id="c-seeds">1</b><span>Seeds</span></div>
+    <div class="ctr"><b id="c-harvest">0</b><span>Harvest</span></div>
+    <div class="ctr"><b id="c-tile">-</b><span>Tile</span></div>
+  </div>
+  <div class="four-btn-grid">
+    <button id="river-btn" class="btn dim sm" onclick="clickRiver()">River is dormant...</button>
+    <button class="btn gold sm" onclick="goShop()">Seed Shop</button>
+    <button id="walk-btn" class="btn walk sm" onclick="goOverworld()">Take a Walk</button>
+    <button id="gh-btn" class="btn greenhouse sm" onclick="goGreenhouse()">The Greenhouse</button>
+  </div>
+  <div class="grid" id="tile-grid"></div>
+  <div id="golden-cat-farm"></div>
+  <div class="act-grid">
+    <button class="btn sm" onclick="act_plant()">Plant Seed</button>
+    <button class="btn sm" onclick="act_water()">Water</button>
+    <button class="btn sm" onclick="act_remove()">Remove</button>
+    <button class="btn sm" onclick="act_harvest()">Harvest</button>
+    <button class="btn sm" onclick="openOverlay('ov-save')">Save &amp; Quit</button>
+    <button class="btn sm" onclick="openOverlay('ov-time-travel')">Time Travel</button>
+  </div>
+  <!-- glowing envelope -->
+  <div id="letter-envelope" onclick="openLetter()">
+    <svg viewBox="0 0 32 24" width="44" height="33" style="image-rendering:pixelated;shape-rendering:crispEdges" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="2" width="32" height="22" fill="#C8A020"/>
+      <rect x="0" y="2" width="32" height="4" fill="#D4B030"/>
+      <rect x="0" y="2" width="3" height="22" fill="#D4B030"/>
+      <rect x="29" y="2" width="3" height="22" fill="#A07010"/>
+      <rect x="0" y="22" width="32" height="2" fill="#A07010"/>
+      <polygon points="0,2 16,14 32,2" fill="#E8C840"/>
+      <polygon points="0,2 10,10 0,22" fill="#B89820"/>
+      <polygon points="32,2 22,10 32,22" fill="#B89820"/>
+      <rect x="11" y="8" width="10" height="2" fill="#FFF8D0"/>
+    </svg>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     OVERLAY: LETTER
+     ══════════════════════════════════════════ -->
+<div class="overlay" id="ov-letter">
+  <div class="panel" style="text-align:center">
+    <p style="font-family:'Press Start 2P',monospace;font-size:7px;color:var(--ink);margin-bottom:6px;line-height:2">You've received a letter.</p>
+    <div id="letter-read-wrap">
+      <button class="btn sm" onclick="readLetter()" style="margin-bottom:4px">Read</button>
+    </div>
+    <div id="letter-body" style="display:none">
+      <p style="font-family:'VT323',monospace;font-size:20px;color:#3A1800;line-height:1.7;text-align:left;margin:14px 0 18px">Whenever I'm pulled under by the weight of all I miss, I take some consolation that I have known, and may yet know, another life.</p>
+      <button class="btn sm" onclick="dismissLetter()">You seem so near</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     RIVER / FLAPPY SCREEN
+     ══════════════════════════════════════════ -->
+<div class="screen" id="s-river" onclick="flappyJump()">
+  <canvas id="flappy-canvas"></canvas>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SEED SHOP SCREEN
+     ══════════════════════════════════════════ -->
+<div class="screen" id="s-shop">
+  <div class="shop-inner">
+    <p class="shop-hdr">Seed Shop</p>
+    <div class="tab-row">
+      <button class="tab-btn active" id="tab-main-btn" onclick="switchTab('main')">Main</button>
+      <button class="tab-btn" id="tab-special-btn" onclick="switchTab('special')">Special</button>
+    </div>
+
+    <!-- MAIN TAB -->
+    <div id="tab-main">
+      <div class="shop-item">
+        <div class="shop-info"><strong>1 Seed</strong>Cost: 1 Water</div>
+        <button class="btn sm" onclick="shop('seeds',1,0,1,0)">Trade</button>
+      </div>
+      <div class="shop-item">
+        <div class="shop-info"><strong>3 Seeds</strong>Cost: 2 Water</div>
+        <button class="btn sm" onclick="shop('seeds',3,0,2,0)">Trade</button>
+      </div>
+      <div class="shop-item">
+        <div class="shop-info"><strong>5 Seeds</strong>Cost: 1 Sweet Potato</div>
+        <button class="btn sm" onclick="shop('seeds',5,0,0,1)">Trade</button>
+      </div>
+      <div class="shop-item">
+        <div class="shop-info"><strong>1 Water</strong>Cost: 2 Seeds</div>
+        <button class="btn blue sm" onclick="shop('water',1,2,0,0)">Trade</button>
+      </div>
+      <div class="shop-item" style="opacity:.88">
+        <div class="shop-info"><strong>1 Sweet Potato</strong>Cost: Your Heart</div>
+        <button class="btn red sm" id="heart-btn" onclick="heartTrade()">Trade</button>
+      </div>
+    </div>
+
+    <!-- SPECIAL TAB -->
+    <div id="tab-special" style="display:none">
+      <div class="shop-special-item">
+        <div class="shop-info"><strong>Golden Cat</strong>Cost: 10 Sweet Potatoes<br><span style="font-size:14px;color:#7A5A10">Max 5 golden cats</span></div>
+        <button class="btn gold sm" onclick="shopCat()">Trade</button>
+      </div>
+      <div class="shop-special-item">
+        <div class="shop-info"><strong>Secret</strong>Cost: 5 Golden Cats<br><span style="font-size:14px;color:#7A5A10">A very special secret</span></div>
+        <button class="btn sm" onclick="shopSecret()">Trade</button>
+      </div>
+    </div>
+
+    <div style="height:10px"></div>
+    <button class="btn sm" style="width:100%" onclick="leaveShop()">Back to Farm</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECRET / POEM SCREEN
+     ══════════════════════════════════════════ -->
+<div class="screen" id="s-secret" onclick="advanceSecret()">
+  <canvas class="secret-stars" id="star-canvas"></canvas>
+  <div class="secret-figure" id="secret-figure"></div>
+  <div class="dialogue-box">
+    <div>
+      <p class="dialogue-name">stranger</p>
+      <p class="dialogue-text" id="dialogue-text">...</p>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end">
+      <button class="btn sm" id="thanks-btn" style="display:none" onclick="event.stopPropagation();endSecret()">Thanks</button>
+      <p class="dialogue-hint" id="dialogue-hint">tap to continue</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     OVERLAY: SETTINGS
+     ══════════════════════════════════════════ -->
+<div class="overlay" id="ov-settings">
+  <div class="panel" style="max-height:80vh;overflow-y:auto">
+    <p style="font-family:'Press Start 2P',monospace;font-size:8px;color:var(--ink);text-align:center;margin-bottom:12px;line-height:2">Sweet Potato<br>Nutrition Facts</p>
+    <div style="font-family:'VT323',monospace;font-size:17px;color:#3A1800;line-height:1.65">
+      <p style="margin-bottom:8px;font-size:14px;color:#6A3A10">Per 100g cooked sweet potato:</p>
+      <b style="display:block;font-size:20px;color:#5C2800;margin:6px 0 3px">Macronutrients</b>
+      Calories: 86 kcal<br>Carbohydrates: 20.1g<br>Dietary Fiber: 3.0g (11% DV)<br>
+      Natural Sugars: 4.2g<br>Protein: 1.6g<br>Total Fat: 0.1g<br>Water Content: 77.3g
+      <b style="display:block;font-size:20px;color:#5C2800;margin:10px 0 3px">Vitamins</b>
+      Vitamin A: 961 mcg RAE (107% DV)<br>Beta-Carotene: 8,509 mcg<br>
+      Vitamin C: 12.8 mg (14% DV)<br>Vitamin B6: 0.29 mg (17% DV)<br>
+      Vitamin B1 (Thiamine): 0.08 mg<br>Vitamin B2 (Riboflavin): 0.06 mg<br>
+      Vitamin B3 (Niacin): 0.61 mg<br>Vitamin B5 (Pantothenic Acid): 0.80 mg (16% DV)<br>
+      Folate (B9): 6 mcg (2% DV)<br>Vitamin E: 0.26 mg<br>Vitamin K: 1.8 mcg
+      <b style="display:block;font-size:20px;color:#5C2800;margin:10px 0 3px">Minerals</b>
+      Potassium: 337 mg (10% DV)<br>Manganese: 0.26 mg (11% DV)<br>
+      Magnesium: 18 mg (4% DV)<br>Phosphorus: 32 mg (3% DV)<br>
+      Calcium: 30 mg (2% DV)<br>Iron: 0.69 mg (4% DV)<br>
+      Zinc: 0.30 mg (3% DV)<br>Copper: 0.16 mg (18% DV)<br>
+      Sodium: 36 mg (2% DV)<br>Choline: 12.3 mg
+      <b style="display:block;font-size:20px;color:#5C2800;margin:10px 0 3px">Additional Notes</b>
+      Beta-carotene is converted to Vitamin A in the body, supporting vision and immune function.<br><br>
+      Anthocyanins found in purple-fleshed varieties have anti-inflammatory and neuroprotective properties.<br><br>
+      Glycemic index of 44-61, lower than white potato (approx. GI 80).<br><br>
+      Dietary fiber supports gut microbiome diversity and digestive function.<br><br>
+      Starch converts to maltose during cooking via amylase enzyme activity.<br><br>
+      Potassium and magnesium contribute to blood pressure regulation and cardiovascular health.<br><br>
+      Contains sporamin, an antioxidant storage protein specific to sweet potatoes.<br><br>
+      Carbohydrates replenish glycogen stores; potassium replaces electrolytes lost during physical activity.<br><br>
+      One medium sweet potato provides approximately 100% of the daily Vitamin A requirement.
+    </div>
+    <div style="margin-top:14px;text-align:center">
+      <button class="btn sm" onclick="closeOverlay('ov-settings')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     OVERLAY: SAVE CONFIRM
+     ══════════════════════════════════════════ -->
+<div class="overlay" id="ov-save">
+  <div class="panel" style="text-align:center">
+    <p style="font-family:'Press Start 2P',monospace;font-size:8px;color:var(--ink);margin-bottom:8px;line-height:2">Save and quit?</p>
+    <p style="font-family:'VT323',monospace;font-size:19px;color:#7A3A18;margin-bottom:20px">Progress will be saved and you will return to the main menu.</p>
+    <div style="display:flex;gap:12px;justify-content:center">
+      <button class="btn sm" onclick="doSave()">Yes, Save</button>
+      <button class="btn red sm" onclick="closeOverlay('ov-save')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     OVERLAY: TIME TRAVEL
+     ══════════════════════════════════════════ -->
+<div class="overlay" id="ov-time-travel">
+  <div class="panel">
+    <p style="font-family:'Press Start 2P',monospace;font-size:7px;color:var(--ink);margin-bottom:12px;text-align:center;line-height:2">Time Travel</p>
+    <p class="tt-text">Do you remember June's long days? Time flies and you'll end up vegetative like sweet potato mulch. I draw a bridge over water, weightless, and it brings me to your midnight wedding. I see the lights wrapped around the trees and the fleeting but concrete moment.</p>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn sm" onclick="doTimeTravelReset()">I understand.</button>
+      <button class="btn sm" onclick="closeOverlay('ov-time-travel')">I'm not ready.</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     OVERWORLD SCREEN
+     ══════════════════════════════════════════ -->
+<div class="screen" id="s-overworld">
+  <canvas id="ow-canvas"></canvas>
+  <p id="ow-hdr">Outside</p>
+  <button id="ow-river-btn" class="btn dim sm" onclick="owClickRiver()">River is dormant...</button>
+  <button id="ow-back-btn" class="btn sm" onclick="leaveOverworld()">Back to Farm</button>
+  <div id="ow-interact-wrap">
+    <button id="ow-interact-btn" class="btn gold sm" onclick="owInteract()">Interact</button>
+  </div>
+  <div class="ow-joystick-base" id="ow-joystick-base">
+    <div class="ow-joystick-knob" id="ow-joystick-knob"></div>
+  </div>
+  <div id="ow-quote-panel">
+    <p class="ow-quote-name">tolstoy</p>
+    <p class="ow-quote-text" id="ow-quote-text"></p>
+    <div style="margin-top:10px;text-align:right">
+      <button class="btn sm" onclick="owCloseQuote()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     GREENHOUSE SCREEN
+     ══════════════════════════════════════════ -->
+<div class="screen" id="s-greenhouse">
+  <canvas id="gh-canvas"></canvas>
+  <p id="gh-hdr">The Greenhouse</p>
+  <button id="gh-back-btn" class="btn sm" onclick="leaveGreenhouse()">Back to Farm</button>
+  <div id="gh-pots-layer"></div>
+  <div id="gh-pot-panel">
+    <p class="gh-panel-title" id="gh-pot-label">Pot 1</p>
+    <div class="cave-row">
+      <button class="btn sm" onclick="ghOpenArrange()">Arrange</button>
+      <button class="btn gold sm" onclick="ghGoStore()">Store</button>
+      <button class="btn red sm" onclick="ghHidePanel()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     GREENHOUSE STORE SCREEN
+     ══════════════════════════════════════════ -->
+<div class="screen" id="s-gh-store">
+  <div class="shop-inner" style="padding-top:8px">
+    <p class="shop-hdr" style="color:#1A3808">Greenhouse Store</p>
+    <p id="gh-store-water" style="font-family:'VT323',monospace;font-size:20px;color:#2A5010;text-align:center;margin-bottom:10px"></p>
+    <div id="gh-store-list"></div>
+    <button class="btn sm" style="width:100%;margin-top:8px" onclick="ghLeaveStore()">Back to Greenhouse</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     OVERLAY: ARRANGE
+     ══════════════════════════════════════════ -->
+<div class="overlay" id="ov-gh-arrange">
+  <div class="panel">
+    <p style="font-family:'Press Start 2P',monospace;font-size:7px;color:var(--ink);margin-bottom:14px;text-align:center;line-height:2" id="gh-arrange-title">Arrange Pot</p>
+    <div id="gh-arrange-slots" style="display:flex;gap:8px;justify-content:center;margin-bottom:14px"></div>
+    <button class="btn sm" style="width:100%" onclick="closeOverlay('ov-gh-arrange')">Done</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     OVERLAY: INVENTORY PICKER
+     ══════════════════════════════════════════ -->
+<div class="overlay" id="ov-gh-inventory">
+  <div class="panel" style="max-height:70vh;overflow-y:auto">
+    <p style="font-family:'Press Start 2P',monospace;font-size:7px;color:var(--ink);margin-bottom:12px;text-align:center;line-height:2">Choose a Plant</p>
+    <div id="gh-inventory-list"></div>
+    <button class="btn sm" style="width:100%;margin-top:8px" onclick="closeOverlay('ov-gh-inventory')">Cancel</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     CAVE SCREEN
+     ══════════════════════════════════════════ -->
+<div class="screen" id="s-cave">
+  <canvas id="cave-canvas"></canvas>
+  <p id="cave-hdr">The Cave</p>
+  <button id="cave-back-btn" class="btn sm" onclick="leaveCave()">Back Outside</button>
+  <div id="cave-panel">
+    <p class="cave-name" id="cave-speaker">wizard</p>
+    <p class="cave-text" id="cave-text">...</p>
+    <div id="cave-quest-area" style="display:none">
+      <input class="cave-input" id="cave-answer" type="text" placeholder="type answer here..." autocomplete="off" autocorrect="off" spellcheck="false">
+      <div class="cave-row">
+        <button class="btn sm" onclick="submitQuest()">Submit</button>
+        <button class="btn red sm" onclick="cancelQuest()">Cancel</button>
+      </div>
+    </div>
+    <div id="cave-action-row" class="cave-row" style="margin-top:8px">
+      <button class="btn sm" id="cave-accept-btn" style="display:none" onclick="acceptQuest()">I accept.</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     OVERLAY: TUTORIAL
+     ══════════════════════════════════════════ -->
+<div class="overlay" id="ov-tutorial">
+  <div class="panel" style="text-align:center">
+    <p style="font-family:'Press Start 2P',monospace;font-size:9px;color:var(--ink);margin-bottom:14px;line-height:2">Hello</p>
+    <p style="font-family:'VT323',monospace;font-size:20px;color:#3A1800;line-height:1.65;margin-bottom:18px;text-align:left">The objective of the game is to plant and harvest sweet potatoes. You must remember to preserve your dignity and resist the temptation of vegetality lest you become a sweet potato yourself. Try acquiring one golden cat to start. Good luck!</p>
+    <button class="btn sm" onclick="closeOverlay('ov-tutorial')">Thanks.</button>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════
+   PIXEL ART HELPERS
+   ══════════════════════════════ */
+const px = rects=>`<svg viewBox="0 0 16 16" width="44" height="44" style="image-rendering:pixelated;shape-rendering:crispEdges" xmlns="http://www.w3.org/2000/svg">${rects}</svg>`;
+const R = (x,y,w,h,c)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`;
+
+const STAGE_ART = [
+  '',
+  px(R(6,10,4,1,'#3A1800')+R(5,11,6,3,'#7A4A2A')+R(6,11,4,3,'#9A6A40')+R(7,10,2,1,'#9A6A40')+R(6,14,4,1,'#3A1800')),
+  px(R(7,5,2,7,'#3A9030')+R(4,6,3,2,'#5ABE48')+R(9,8,3,2,'#5ABE48')+R(6,12,4,3,'#7A4A2A')+R(7,12,2,3,'#9A6A40')),
+  px(R(7,3,2,9,'#3A9030')+R(3,4,4,2,'#5ABE48')+R(3,5,2,4,'#2E7822')+R(9,6,4,2,'#5ABE48')+R(11,7,2,4,'#2E7822')+R(6,12,4,3,'#7A4A2A')+R(7,12,2,3,'#9A6A40')),
+  px(R(7,2,2,9,'#3A9030')+R(2,3,5,3,'#5ABE48')+R(2,4,2,5,'#2E7822')+R(9,4,5,3,'#5ABE48')+R(13,5,2,5,'#2E7822')+R(4,7,4,3,'#226818')+R(8,8,4,3,'#226818')+R(5,10,6,3,'#7A4A2A')+R(6,10,4,3,'#9A6A40')),
+  px(R(7,1,2,8,'#3A9030')+R(1,2,6,3,'#5ABE48')+R(1,3,2,6,'#226818')+R(9,3,6,3,'#5ABE48')+R(13,4,2,6,'#226818')+R(3,5,5,5,'#2E7822')+R(8,5,5,5,'#2E7822')+R(5,9,6,3,'#3A9030')+R(4,11,8,3,'#7A4A2A')+R(5,11,6,3,'#9A6A40')),
+  px(R(5,1,6,2,'#5ABE48')+R(3,2,10,3,'#3A9030')+R(2,3,12,3,'#226818')+R(3,5,10,2,'#2E7822')+R(3,6,10,5,'#D4700E')+R(2,7,12,4,'#C05808')+R(3,11,10,2,'#A04000')+R(5,8,2,2,'#F39C12')+R(9,9,2,2,'#F39C12')+R(7,7,2,2,'#EAA020')),
+];
+
+function goldenCatSVG(w=28,h=31){
+  return `<svg viewBox="0 0 20 22" width="${w}" height="${h}" style="image-rendering:pixelated;shape-rendering:crispEdges" xmlns="http://www.w3.org/2000/svg">
+  ${R(5,4,10,9,'#FFD700')}${R(4,5,12,7,'#FFD700')}${R(4,1,3,5,'#FFD700')}${R(13,1,3,5,'#FFD700')}
+  ${R(5,2,2,4,'#FFA726')}${R(13,2,2,4,'#FFA726')}${R(5,6,2,2,'#1a1a1a')}${R(13,6,2,2,'#1a1a1a')}
+  ${R(6,6,1,1,'#fff')}${R(14,6,1,1,'#fff')}${R(7,10,6,1,'#E67E22')}
+  ${R(3,12,14,8,'#FFD700')}${R(2,13,16,6,'#FFD700')}${R(16,7,3,6,'#FFD700')}${R(16,13,3,2,'#FFA726')}
+  ${R(2,18,3,4,'#FFD700')}${R(2,17,3,2,'#FFC107')}${R(15,18,3,3,'#FFD700')}
+  </svg>`;
+}
+
+const FIGURE_SVG=`<svg viewBox="0 0 16 28" width="72" height="126" style="image-rendering:pixelated;shape-rendering:crispEdges" xmlns="http://www.w3.org/2000/svg">
+${R(5,0,6,1,'#1E0A00')}${R(4,1,8,3,'#2E1000')}${R(4,1,1,6,'#2E1000')}${R(11,1,1,6,'#2E1000')}
+${R(5,2,6,6,'#EEB888')}${R(6,4,1,1,'#1A0800')}${R(9,4,1,1,'#1A0800')}${R(7,6,2,1,'#C08060')}
+${R(9,7,2,1,'#EEB888')}${R(5,8,6,3,'#8898C8')}${R(3,8,2,4,'#EEB888')}${R(11,8,2,4,'#EEB888')}
+${R(3,12,10,2,'#8898C8')}${R(2,14,12,3,'#7888B8')}${R(1,17,14,4,'#7888B8')}
+${R(5,21,2,5,'#EEB888')}${R(9,21,2,5,'#EEB888')}${R(4,26,4,2,'#2A1800')}${R(8,26,4,2,'#2A1800')}
+</svg>`;
+
+/* ══════════════════════════════
+   STATE
+   ══════════════════════════════ */
+const WATERS_NEEDED=8;
+let G=freshState();
+function freshState(){
+  return{water:1,seeds:1,harvested:0,goldenCats:0,secretPending:false,
+         questsCompleted:0, questDoneThisVisit:false,
+         ghInventory:{}, ghPots:Array.from({length:9},()=>[null,null,null]),
+         letterRead:false,
+         sel:null,tiles:Array.from({length:9},()=>({planted:false,waters:0})),
+         riverActive:false};
+}
+
+/* ══════════════════════════════
+   SCREEN NAV
+   ══════════════════════════════ */
+let currentScreen='s-start';
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  currentScreen=id;
+}
+function openOverlay(id){document.getElementById(id).classList.add('on');}
+function closeOverlay(id){document.getElementById(id).classList.remove('on');}
+
+/* ══════════════════════════════
+   GROWTH
+   ══════════════════════════════ */
+function getStage(t){
+  if(!t.planted) return 0;
+  const w=t.waters;
+  if(w===0) return 1; if(w<=2) return 2; if(w<=4) return 3;
+  if(w<=6) return 4; if(w===7) return 5; return 6;
+}
+
+/* ══════════════════════════════
+   RENDER
+   ══════════════════════════════ */
+function render(){
+  document.getElementById('c-water').textContent   = G.water;
+  document.getElementById('c-seeds').textContent   = G.seeds;
+  document.getElementById('c-harvest').textContent = G.harvested;
+  document.getElementById('c-tile').textContent    = G.sel!==null?G.sel+1:'-';
+
+  const grid=document.getElementById('tile-grid');
+  grid.innerHTML='';
+  G.tiles.forEach((t,i)=>{
+    const stage=getStage(t);
+    const div=document.createElement('div');
+    div.className='tile'+(G.sel===i?' sel':'');
+    div.onclick=()=>handleTileClick(i);
+    if(STAGE_ART[stage]) div.innerHTML=STAGE_ART[stage];
+    if(t.planted&&stage<6){
+      const wd=document.createElement('div');wd.className='wdots';
+      for(let d=0;d<WATERS_NEEDED;d++){
+        const dot=document.createElement('div');
+        dot.className='wd'+(d<t.waters?' on':'');
+        wd.appendChild(dot);
+      }
+      div.appendChild(wd);
+    }
+    if(t.planted){
+      const pg=document.createElement('div');pg.className='tile-prog';
+      pg.textContent=stage===6?'READY.':t.waters+'/'+WATERS_NEEDED;
+      div.appendChild(pg);
+    }
+    grid.appendChild(div);
+  });
+
+  const catEl=document.getElementById('golden-cat-farm');
+  if(G.goldenCats>0){
+    catEl.style.display='flex'; catEl.innerHTML='';
+    for(let i=0;i<G.goldenCats;i++){
+      const wrap=document.createElement('div');
+      wrap.innerHTML=goldenCatSVG(28,31);
+      catEl.appendChild(wrap);
+    }
+  } else { catEl.style.display='none'; }
+  updateWalkBtn();
+  updateGhBtn();
+  updateEnvelope();
+}
+
+/* ══════════════════════════════
+   SECRET TILE-8 TRIPLE CLICK  +  L-SHAPE POTATO HACK
+   ══════════════════════════════ */
+let secretClicks=0,secretTimer=null;
+// L-shape: tap tiles 0,3,6,7,8,8 in sequence within 1.8 seconds
+const L_SEQ=[0,3,6,7,8,8];
+let lIdx=0,lTimer=null;
+function handleTileClick(i){
+  G.sel=i;
+
+  // river triple-click (tile 8)
+  if(i===8){
+    secretClicks++;
+    clearTimeout(secretTimer);
+    secretTimer=setTimeout(()=>secretClicks=0,700);
+    if(secretClicks>=4){secretClicks=0;if(!G.riverActive){clearTimeout(_riverDormant);activateRiver();}}
+  }
+
+  // L-shape potato hack
+  if(i===L_SEQ[lIdx]){
+    lIdx++;
+    clearTimeout(lTimer);
+    if(lIdx>=L_SEQ.length){
+      lIdx=0;
+      G.harvested+=10;render();toast('10 sweet potatoes appeared.');
+    } else {
+      lTimer=setTimeout(()=>lIdx=0,1800);
+    }
+  } else {
+    lIdx=0; clearTimeout(lTimer);
+    // restart check in case this tap begins the sequence
+    if(i===L_SEQ[0]){ lIdx=1; clearTimeout(lTimer); lTimer=setTimeout(()=>lIdx=0,1800); }
+  }
+
+  render();
+  updateWalkBtn();
+}
+
+/* ══════════════════════════════
+   ACTIONS
+   ══════════════════════════════ */
+function needSel(){if(G.sel===null){toast('Select a tile first.');return false;}return true;}
+
+function act_plant(){
+  if(!needSel()) return;
+  const t=G.tiles[G.sel];
+  if(t.planted){toast('Already planted here.');return;}
+  if(G.seeds<1){toast('No seeds; visit the shop.');return;}
+  G.seeds--;t.planted=true;t.waters=0;render();toast('Seed planted.');autoSave();
+}
+function act_water(){
+  if(!needSel()) return;
+  const t=G.tiles[G.sel];
+  if(!t.planted){
+    if(G.water<1){toast('No water; see frog at the river.');return;}
+    G.water--;render();toast('Water soaked into the empty soil.');autoSave();return;
+  }
+  if(getStage(t)===6){toast('Ready to harvest.');return;}
+  if(G.water<1){toast('No water; see frog at the river.');return;}
+  G.water--;t.waters=Math.min(t.waters+1,WATERS_NEEDED);render();
+  toast(getStage(t)===6?'Your potato is ready to harvest.':'Watered. '+t.waters+'/'+WATERS_NEEDED);
+  autoSave();
+}
+function act_remove(){
+  if(!needSel()) return;
+  const t=G.tiles[G.sel];
+  if(!t.planted){toast('Nothing to remove.');return;}
+  t.planted=false;t.waters=0;render();toast('Seed removed.');
+}
+function act_harvest(){
+  if(!needSel()) return;
+  const t=G.tiles[G.sel];
+  if(!t.planted){toast('Nothing to harvest here.');return;}
+  if(getStage(t)<6){toast('Not ready yet; keep watering.');return;}
+  G.harvested++;t.planted=false;t.waters=0;render();toast('Sweet potato harvested.');autoSave();
+}
+
+/* ══════════════════════════════
+   SHOP TABS
+   ══════════════════════════════ */
+function switchTab(tab){
+  document.getElementById('tab-main').style.display    =tab==='main'   ?'block':'none';
+  document.getElementById('tab-special').style.display =tab==='special'?'block':'none';
+  document.getElementById('tab-main-btn').classList.toggle('active',   tab==='main');
+  document.getElementById('tab-special-btn').classList.toggle('active',tab==='special');
+}
+function goShop(){showScreen('s-shop');}
+function leaveShop(){
+  showScreen('s-farm');render();
+  if(G.secretPending){G.secretPending=false;setTimeout(startSecretEnding,350);}
+}
+
+/* ══════════════════════════════
+   SHOP TRADES
+   ══════════════════════════════ */
+function shop(reward,rewardAmt,seedCost,waterCost,potatoCost){
+  if(G.seeds<seedCost){toast('Need '+seedCost+' seed'+(seedCost!==1?'s':'')+'.');return;}
+  if(G.water<waterCost){toast('Need '+waterCost+' water.');return;}
+  if(G.harvested<potatoCost){toast('Need '+potatoCost+' sweet potato'+(potatoCost!==1?'es':'')+'.');return;}
+  G.seeds-=seedCost;G.water-=waterCost;G.harvested-=potatoCost;
+  if(reward==='seeds')  G.seeds+=rewardAmt;
+  if(reward==='water')  G.water+=rewardAmt;
+  if(reward==='potato') G.harvested+=rewardAmt;
+  render();
+  const rname=reward==='seeds'?rewardAmt+' seed'+(rewardAmt!==1?'s':''):
+              reward==='water'?rewardAmt+' water':
+                               rewardAmt+' sweet potato'+(rewardAmt!==1?'es':'');
+  toast('Got '+rname+'.');autoSave();
+}
+function shopCat(){
+  if(G.goldenCats>=5){toast('You already have all 5 golden cats.');return;}
+  if(G.harvested<10){toast('Need 10 sweet potatoes.');return;}
+  G.harvested-=10;G.goldenCats++;render();
+  toast(G.goldenCats===5?'All 5 golden cats on your farm.':'A golden cat has arrived.');
+  autoSave();
+}
+function shopSecret(){
+  if(G.goldenCats<5){toast('You need all 5 golden cats.');return;}
+  if(G.secretPending) return;
+  G.secretPending=true;
+}
+
+/* heart trade hack */
+let heartClicks=0,heartTimer=null,heartUsed=false;
+function heartTrade(){
+  heartClicks++;
+  clearTimeout(heartTimer);
+  heartTimer=setTimeout(()=>heartClicks=0,3000);
+  if(!heartUsed&&heartClicks===10){heartClicks=0;heartUsed=true;G.secretPending=true;return;}
+  if(heartClicks>10) heartClicks=0;
+  toast('You cannot trade your heart.');
+}
+
+/* ══════════════════════════════
+   SAVE / LOAD
+   ══════════════════════════════ */
+function doSave(){
+  try{localStorage.setItem('spbr_save',JSON.stringify(G));}catch(e){}
+  clearTimeout(_riverDormant);clearTimeout(_riverActive);
+  stopRiverAudio();
+  closeOverlay('ov-save');
+  showScreen('s-start');
+  updateStartButtons();
+}
+function continueGame(){
+  initAudio();
+  try{
+    const saved=localStorage.getItem('spbr_save');
+    if(saved){G=JSON.parse(saved);G.riverActive=false;}
+    else G=freshState();
+  }catch(e){G=freshState();}
+  showScreen('s-farm');render();scheduleRiver();updateRiverBtn(false);
+}
+
+/* ══════════════════════════════
+   TIME TRAVEL RESET
+   ══════════════════════════════ */
+function doTimeTravelReset(){
+  clearTimeout(_riverDormant);clearTimeout(_riverActive);
+  if(flappyState){flappyState.running=false;cancelAnimationFrame(flappyState.raf);flappyState=null;}
+  stopRiverAudio();
+  try{localStorage.removeItem('spbr_save');}catch(e){}
+  G=freshState();
+  closeOverlay('ov-time-travel');
+  showScreen('s-farm');render();scheduleRiver();
+  updateStartButtons();
+}
+
+/* ══════════════════════════════
+   RIVER MECHANIC
+   ══════════════════════════════ */
+let _riverDormant=null,_riverActive=null;
+function scheduleRiver(){
+  const ms=60000+Math.random()*60000;
+  _riverDormant=setTimeout(activateRiver,ms);
+  updateRiverBtn(false);
+}
+function activateRiver(){
+  G.riverActive=true;updateRiverBtn(true);
+  _riverActive=setTimeout(deactivateRiver,9000);
+}
+function deactivateRiver(){
+  G.riverActive=false;updateRiverBtn(false);scheduleRiver();
+}
+function updateRiverBtn(active){
+  const btn=document.getElementById('river-btn');
+  if(active){btn.textContent='River is overflowing.';btn.className='btn active-river sm';}
+  else      {btn.textContent='River is dormant...';  btn.className='btn dim sm';}
+  syncOwRiverBtn();
+}
+function clickRiver(){
+  if(!G.riverActive){toast('Wait for the tides to rise.');return;}
+  clearTimeout(_riverActive);G.riverActive=false;updateRiverBtn(false);
+  startRiverGame();
+}
+
+/* ══════════════════════════════
+   FLAPPY RIVER GAME
+   ══════════════════════════════ */
+const PIPE_W    = 46;
+const PIPE_GAP  = 175;
+const PIPE_INT  = 120;
+const GRAVITY   = 0.34;
+const JUMP_V    = -7.8;
+const PIPE_SPD  = 2.0;
+const FROG_SCALE= 4;
+const FROG_COLS = 8;
+const FROG_ROWS = 8;
+const FROG_W    = FROG_COLS * FROG_SCALE;
+const FROG_H    = FROG_ROWS * FROG_SCALE;
+
+// 0=empty 1=body 2=outline 3=eye-white 4=pupil 5=belly 6=mouth-dark
+const FROG_PIX = [
+  [0,0,2,2,2,2,0,0],  // head top
+  [0,2,3,1,1,3,2,0],  // eyes
+  [0,2,4,1,1,4,2,0],  // pupils
+  [2,1,1,5,5,1,1,2],  // belly top
+  [2,1,5,5,5,5,1,2],  // belly
+  [0,2,1,6,6,1,2,0],  // mouth
+  [2,1,2,0,0,2,1,2],  // legs
+  [2,0,0,0,0,0,0,2],  // feet
+];
+const FROG_CLR=['','#5DBB5D','#2E6E2E','#FFFFFF','#1A2E1A','#C8E8A0','#2A1A0A'];
+
+// Books: each entry is one book height's worth of a shelf column
+// We use a single warm wood shelf tone with books drawn in a limited earthy palette
+const SHELF_BOOKS=[
+  {cover:'#8B1A1A',spine:'#5C0000',page:'#F5E6D0',label:'#FFD0A0'}, // deep red
+  {cover:'#1A3A5C',spine:'#0A1E3C',page:'#E8F0F8',label:'#90B8D8'}, // navy
+  {cover:'#2C5F2E',spine:'#153016',page:'#E8F5E9',label:'#A8D8A8'}, // forest
+  {cover:'#5C3A1A',spine:'#3C2008',page:'#F5EAD8',label:'#D4A870'}, // brown
+  {cover:'#4A2060',spine:'#2A0840',page:'#F0E8F8',label:'#C090E0'}, // plum
+  {cover:'#3A3A1A',spine:'#1E1E08',page:'#F5F5E0',label:'#C8C870'}, // olive
+  {cover:'#6A3020',spine:'#400E00',page:'#F8EAE0',label:'#D8A080'}, // rust
+  {cover:'#1A4A4A',spine:'#082828',page:'#E0F5F5',label:'#70C0C0'}, // teal
+];
+const BOOK_H=24;
+const SHELF_H=4; // gap between books acting as a shelf line
+
+let flappyState=null;
+
+function startRiverGame(){
+  showScreen('s-river');
+  playRiverAmbience(); autoSave();
+  const canvas=document.getElementById('flappy-canvas');
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+  flappyState={
+    frog:{x:Math.floor(canvas.width*0.2),y:canvas.height*0.38,vy:-2},
+    pipes:[],score:0,running:true,
+    frameCount:0,lastPipe:-(PIPE_INT*0.7)|0,
+    lastGapY:canvas.height*0.4,
+    graceTicks:0,
+    raf:null
+  };
+  flappyState.raf=requestAnimationFrame(flappyTick);
+}
+
+function flappyJump(){
+  if(!flappyState||!flappyState.running) return;
+  flappyState.frog.vy=JUMP_V;
+}
+
+function flappyTick(){
+  if(!flappyState||!flappyState.running) return;
+  const s=flappyState;
+  const canvas=document.getElementById('flappy-canvas');
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;
+
+  s.frameCount++; s.lastPipe++;
+
+  // spawn pipe — gap clamped within ±30% of screen from last gap
+  if(s.lastPipe>=PIPE_INT){
+    const minY=100, maxY=H-100-PIPE_GAP;
+    const maxShift=H*0.45;
+    const lo=Math.max(minY,s.lastGapY-maxShift);
+    const hi=Math.min(maxY,s.lastGapY+maxShift);
+    const gapY=lo+Math.random()*(hi-lo);
+    s.lastGapY=gapY;
+    s.pipes.push({x:W,gapY,passed:false,toff:Math.floor(Math.random()*8),boff:Math.floor(Math.random()*8)});
+    s.lastPipe=0;
+  }
+
+  // update frog
+  s.frog.vy+=GRAVITY;
+  s.frog.y+=s.frog.vy;
+
+  // update pipes
+  s.pipes.forEach(p=>{
+    p.x-=PIPE_SPD;
+    if(!p.passed&&p.x+PIPE_W<s.frog.x){p.passed=true;s.score++;}
+  });
+  s.pipes=s.pipes.filter(p=>p.x>-PIPE_W-10);
+
+  // collision: ceiling / floor
+  if(s.frog.y<0||s.frog.y+FROG_H>H){endFlappy();return;}
+
+  // collision: pipes — with grace-tick leniency (10 frames ~167ms before dying)
+  let hitting=false;
+  for(const p of s.pipes){
+    if(s.frog.x+FROG_W-5>p.x&&s.frog.x+5<p.x+PIPE_W){
+      if(s.frog.y+5<p.gapY||s.frog.y+FROG_H-5>p.gapY+PIPE_GAP){
+        hitting=true; break;
+      }
+    }
+  }
+  if(hitting){
+    s.graceTicks++;
+    if(s.graceTicks>10){endFlappy();return;}
+  } else {
+    s.graceTicks=0;
+  }
+
+  drawFlappy(ctx,W,H,s);
+  s.raf=requestAnimationFrame(flappyTick);
+}
+
+function drawFlappy(ctx,W,H,s){
+  // background
+  ctx.fillStyle='#0D2035'; ctx.fillRect(0,0,W,H);
+
+  // draw bubble ambience (simple)
+  ctx.fillStyle='rgba(90,188,226,0.06)';
+  for(let i=0;i<5;i++){
+    const bx=((s.frameCount*0.8+i*137)%W);
+    const by=((s.frameCount*0.5+i*83)%H);
+    ctx.beginPath();ctx.arc(bx,by,4+i*2,0,Math.PI*2);ctx.fill();
+  }
+
+  // pipes (book stacks)
+  s.pipes.forEach(p=>drawPipe(ctx,p,H));
+
+  // frog
+  drawFrog(ctx,Math.floor(s.frog.x),Math.floor(s.frog.y),s.frog.vy);
+
+  // THE RIVER header
+  ctx.fillStyle='rgba(174,216,240,0.9)';
+  ctx.font='bold 10px "Press Start 2P", monospace';
+  ctx.textAlign='center';
+  ctx.fillText('THE RIVER',W/2,22);
+
+  // score
+  ctx.fillStyle='rgba(255,255,255,0.92)';
+  ctx.font='bold 18px "Press Start 2P", monospace';
+  ctx.textAlign='center';
+  ctx.fillText(s.score,W/2,50);
+}
+
+function drawPipe(ctx,pipe,H){
+  const x=Math.floor(pipe.x);
+  drawBookStack(ctx,x,0,Math.floor(pipe.gapY),pipe.toff);
+  drawBookStack(ctx,x,Math.floor(pipe.gapY+PIPE_GAP),H,pipe.boff);
+}
+
+function drawBookStack(ctx,x,fromY,toY,startIdx){
+  let y=fromY, bi=startIdx;
+  while(y<toY){
+    const bk=SHELF_BOOKS[bi%SHELF_BOOKS.length];
+    const bookH=Math.min(BOOK_H,toY-y);
+    if(bookH<=0) break;
+
+    // shelf/gap line at bottom of each book slot
+    const slotH=Math.min(BOOK_H+SHELF_H,toY-y);
+
+    // cover
+    ctx.fillStyle=bk.cover;
+    ctx.fillRect(x,y,PIPE_W,bookH);
+
+    // spine (left edge, ~7px)
+    ctx.fillStyle=bk.spine;
+    ctx.fillRect(x,y,7,bookH);
+
+    // page edges (right side, ~4px, cream)
+    ctx.fillStyle=bk.page;
+    ctx.fillRect(x+PIPE_W-4,y,4,bookH);
+    // page line detail
+    ctx.fillStyle='rgba(0,0,0,0.12)';
+    ctx.fillRect(x+PIPE_W-5,y,1,bookH);
+
+    // label strip in middle of spine (if enough height)
+    if(bookH>=14){
+      ctx.fillStyle=bk.label;
+      const labelY=y+Math.floor(bookH*0.28);
+      const labelH=Math.floor(bookH*0.44);
+      ctx.fillRect(x+1,labelY,5,labelH);
+    }
+
+    // spine-cover edge line
+    ctx.fillStyle='rgba(0,0,0,0.3)';
+    ctx.fillRect(x+7,y,1,bookH);
+
+    // shelf line (dark gap between books)
+    if(y+BOOK_H<toY){
+      ctx.fillStyle='#0A1420';
+      ctx.fillRect(x,y+bookH,PIPE_W,Math.min(SHELF_H,toY-y-bookH));
+    }
+
+    y+=BOOK_H+SHELF_H; bi++;
+  }
+}
+
+function drawFrog(ctx,x,y,vy){
+  const tilt=Math.max(-0.4,Math.min(0.4,vy*0.04));
+  ctx.save();
+  ctx.translate(x+FROG_W/2,y+FROG_H/2);
+  ctx.rotate(tilt);
+  ctx.translate(-FROG_W/2,-FROG_H/2);
+  FROG_PIX.forEach((row,ry)=>{
+    row.forEach((cell,rx)=>{
+      if(!cell) return;
+      ctx.fillStyle=FROG_CLR[cell];
+      ctx.fillRect(rx*FROG_SCALE,ry*FROG_SCALE,FROG_SCALE,FROG_SCALE);
+    });
+  });
+  ctx.restore();
+}
+
+function endFlappy(){
+  if(!flappyState||!flappyState.running) return;
+  flappyState.running=false;
+  cancelAnimationFrame(flappyState.raf);
+  const score=flappyState.score;
+  const water=score>=20?5:score>=15?4:score>=10?3:score>=5?2:score>=2?1:0;
+
+  // draw death overlay on canvas
+  const canvas=document.getElementById('flappy-canvas');
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='rgba(0,0,0,0.58)';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.textAlign='center';
+  ctx.fillStyle='#AED8F0';
+  ctx.font='12px "Press Start 2P", monospace';
+  ctx.fillText('score: '+score,canvas.width/2,canvas.height/2-18);
+  if(water>0){
+    ctx.fillStyle='#5ABCE2';
+    ctx.font='10px "Press Start 2P", monospace';
+    ctx.fillText('+'+water+' water',canvas.width/2,canvas.height/2+12);
+  }
+
+  G.water+=water;
+
+  setTimeout(()=>{
+    stopRiverAudio();
+    flappyState=null;
+    showScreen('s-farm');render();scheduleRiver();
+    if(water>0) toast('+'+water+' water from the river.');
+    else toast('Better luck next time.');
+  },1500);
+}
+
+/* ══════════════════════════════
+   SECRET ENDING
+   ══════════════════════════════ */
+const POEM=[
+  "Try to praise my mutilated world.",
+  "Remember May's long days, and wild strawberries, drops of rosé wine.",
+  "The nettles that methodically overgrow the abandoned homesteads of exiles.",
+  "You must praise my mutilated world.",
+  "You watched the stylish yachts and ships; one of them had a long trip ahead of it, while salty oblivion awaited others.",
+  "You've seen the refugees going nowhere, you've heard the executioners sing joyfully.",
+  "You should praise the mutilated world.",
+  "Remember the moments when we were together in a white room and the curtain fluttered.",
+  "Return in thought to the concert where music flared.",
+  "You gathered acorns in the park in autumn and leaves eddied over the earth's scars.",
+  "Praise the mutilated world and the gray feather a thrush lost, and the gentle light that strays and vanishes and returns."
+];
+let secretLineIdx=0;
+
+function startSecretEnding(){
+  const canvas=document.getElementById('star-canvas');
+  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#0A0816';ctx.fillRect(0,0,canvas.width,canvas.height);
+  for(let i=0;i<180;i++){
+    const x=Math.random()*canvas.width,y=Math.random()*canvas.height*.7;
+    const r=Math.random()*1.5+.2;
+    ctx.fillStyle=`rgba(255,255,255,${.3+Math.random()*.7})`;
+    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+  }
+  document.getElementById('secret-figure').innerHTML=FIGURE_SVG;
+  secretLineIdx=0;
+  document.getElementById('dialogue-text').textContent=POEM[0];
+  document.getElementById('thanks-btn').style.display='none';
+  document.getElementById('dialogue-hint').textContent='tap to continue';
+  document.getElementById('dialogue-hint').style.display='block';
+  showScreen('s-secret');
+}
+function advanceSecret(){
+  if(secretLineIdx>=POEM.length) return;
+  secretLineIdx++;
+  if(secretLineIdx>=POEM.length){
+    document.getElementById('thanks-btn').style.display='block';
+    document.getElementById('dialogue-hint').style.display='none';
+    return;
+  }
+  document.getElementById('dialogue-text').textContent=POEM[secretLineIdx];
+  if(secretLineIdx===POEM.length-1) document.getElementById('dialogue-hint').textContent='tap to finish';
+}
+function endSecret(){showScreen('s-farm');render();}
+
+/* ══════════════════════════════
+   GAME START
+   ══════════════════════════════ */
+function startGame(){
+  initAudio();G=freshState();showScreen('s-farm');render();scheduleRiver();
+  updateStartButtons();
+  setTimeout(()=>openOverlay('ov-tutorial'),300);
+}
+
+/* ══════════════════════════════
+   TOAST
+   ══════════════════════════════ */
+let _toastT=null, _toastShownAt=0;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  _toastShownAt=Date.now();
+  clearTimeout(_toastT);
+  _toastT=setTimeout(()=>el.classList.remove('show'),2700);
+}
+
+/* ══════════════════════════════
+   AUDIO — RIVER ONLY
+   ══════════════════════════════ */
+let audioCtx=null,_riverNoiseSrc=null;
+function initAudio(){
+  if(audioCtx) return;
+  audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+}
+function stopRiverAudio(){
+  if(_riverNoiseSrc){try{_riverNoiseSrc.stop();}catch(e){}_riverNoiseSrc=null;}
+}
+function playRiverAmbience(){
+  if(!audioCtx) return;
+  stopRiverAudio();
+  const sr=audioCtx.sampleRate,len=sr*3;
+  const buf=audioCtx.createBuffer(1,len,sr);
+  const d=buf.getChannelData(0);
+  for(let i=0;i<len;i++) d[i]=Math.random()*2-1;
+  const src=audioCtx.createBufferSource();
+  src.buffer=buf;src.loop=true;
+  const lp=audioCtx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=700;lp.Q.value=0.5;
+  const hp=audioCtx.createBiquadFilter();hp.type='highpass';hp.frequency.value=100;hp.Q.value=0.3;
+  const g=audioCtx.createGain();g.gain.value=0.16;
+  src.connect(hp);hp.connect(lp);lp.connect(g);g.connect(audioCtx.destination);
+  src.start();_riverNoiseSrc=src;
+}
+
+/* global: tap dismisses toast (only if it's been visible ≥600ms) + resumes audio */
+document.addEventListener('click',()=>{
+  if(Date.now()-_toastShownAt>600) document.getElementById('toast').classList.remove('show');
+  if(audioCtx&&audioCtx.state==='suspended') audioCtx.resume();
+},{passive:true});
+
+/* ══════════════════════════════
+   START SCREEN BUTTON STATE
+   ══════════════════════════════ */
+function hasSavedGame(){
+  try{return!!localStorage.getItem('spbr_save');}catch(e){return false;}
+}
+function updateStartButtons(){
+  const has=hasSavedGame();
+  const beginBtn=document.getElementById('begin-btn');
+  const contBtn=document.getElementById('continue-btn');
+  if(has){
+    contBtn.style.display='block'; contBtn.className='btn lg';
+    beginBtn.className='btn sm'; beginBtn.textContent='NEW GAME';
+  } else {
+    contBtn.style.display='none';
+    beginBtn.className='btn lg'; beginBtn.textContent='BEGIN';
+  }
+}
+
+/* check for save on load */
+window.addEventListener('load',()=>{ updateStartButtons(); });
+
+/* ══════════════════════════════
+   AUTO-SAVE
+   ══════════════════════════════ */
+function autoSave(){
+  try{localStorage.setItem('spbr_save',JSON.stringify(G));updateStartButtons();}catch(e){}
+}
+
+/* ══════════════════════════════
+   LETTER / ENVELOPE
+   ══════════════════════════════ */
+function updateEnvelope(){
+  const el=document.getElementById('letter-envelope');
+  if(!el) return;
+  if(G.letterRead){
+    el.style.display='none'; return;
+  }
+  el.style.display='block';
+  el.classList.remove('dim','glow');
+  if(G.goldenCats>=3){ el.classList.add('glow'); }
+  else               { el.classList.add('dim');  }
+}
+function openLetter(){
+  if(G.goldenCats<3){toast('Need 3 golden cats to read letter.');return;}
+  document.getElementById('letter-read-wrap').style.display='block';
+  document.getElementById('letter-body').style.display='none';
+  openOverlay('ov-letter');
+}
+function readLetter(){
+  document.getElementById('letter-read-wrap').style.display='none';
+  document.getElementById('letter-body').style.display='block';
+}
+function dismissLetter(){
+  G.letterRead=true;
+  closeOverlay('ov-letter');
+  updateEnvelope();
+  autoSave();
+}
+function updateWalkBtn(){
+  const btn=document.getElementById('walk-btn');
+  if(!btn) return;
+  if(G.goldenCats>=1){
+    btn.disabled=false; btn.style.opacity='1';
+  } else {
+    btn.disabled=false; btn.style.opacity='.55';
+  }
+}
+function goOverworld(){
+  if(G.goldenCats<1){toast('Need a golden cat to leave the farm.');return;}
+  initAudio(); startOverworld();
+}
+function leaveOverworld(){
+  owStop(); showScreen('s-farm'); render();
+  G.questDoneThisVisit=false;
+}
+
+/* ══════════════════════════════
+   TOLSTOY QUOTES (Anna Karenina)
+   ══════════════════════════════ */
+const AK_QUOTES=[
+  /* On society, class & hypocrisy */
+  "In all the strata of society there was an idea that the way things were was inevitable, and that it was impossible to change them, and therefore natural not to think about them.",
+  "He soon felt that the fulfillment of his desires gave him only one grain of the mountain of happiness he had expected. This fulfillment showed him the eternal error men make in imagining that their happiness depends on the realization of their desires.",
+  "The highest praise of a man of the world is that he is so polished, so free from roughness, that he can speak of one thing and mean another, and his listener understands both — the thing said and the thing concealed.",
+  "There was no solution, but that universal solution which life gives to all questions, even the most complex and insoluble. That solution is to live in the needs of the day, that is, to forget oneself.",
+  "He felt that all the society around him was an elaborate machine devised to manufacture opinions, and that he was a cog in this machine.",
+  "She belonged to a world of wealth and society where they lived, quite genuinely, as though the absence of suffering were proof of virtue.",
+  "Moscow society was made up of people who were either very important or very necessary. Important people spoke of nothing but the weather, the opera, and their ailments. Necessary people never finished their sentences.",
+  /* On farming, nature, the land */
+  "He went out before sunrise. The dew lay on the grass. A quail piped in the rye. The rooks, awakening, swung clumsily from branch to branch in the lofty birch-trees. Peasants with their cattle were emerging from the village. He breathed in the smell of the mist, the rotting leaves, the damp earth — and was happy.",
+  "The longer Levin mowed, the oftener he experienced those moments of oblivion when it was not his arms which swung the scythe, but the scythe seemed to mow of itself, a body full of life and consciousness of its own, and as though by magic, without thinking of it, the work turned out regular and finished.",
+  "The whole long summer's day he spent in the fields, and as he drove home in the evening, he thought: the work was good. He did not analyze why it was good. It was simply good — the way rain is good after drought, or sleep after exhaustion.",
+  "The haying was in full swing. The meadows, with the sweet smell of the mown grass and the glistening dew, stretched out bright and peaceful in the morning sun.",
+  "He stood at the edge of the rye field and felt all of it — the hot earth beneath his boots, the sky pressing down on the crop, the patient readiness of things that grow — and for a moment he could not remember why he had ever lived anywhere else.",
+  "In the country, Levin was not simply happy. He was absorbed. Every morning brought new things to be done. Every evening brought the satisfaction of things completed. He had not felt this in the city, where the days slid past without leaving a mark.",
+  "There is a particular beauty in a field that has just been turned. It is not the beauty of a painting or a sunset. It is the beauty of a promise — something that has been prepared, and is now waiting.",
+  /* On belief, God, meaning */
+  "Without knowing what I am and why I am here, it is impossible to live. And that I cannot know, and so I cannot live. In the infinity of time, in the infinity of matter, in the infinity of space, a bubble-organism separates itself, and that bubble lasts a while and then bursts — and that bubble is me.",
+  "He had been living a spiritual life — and suddenly, confronted with the coarseness of material reality, he felt not contempt for material life, but awe. The two were not opposed. They had been waiting to be joined.",
+  "The simple peasant lives by the same questions I have been tormenting myself with for years, Levin thought — except that he does not torment himself. He answers them in the morning, with his hands, and again in the evening, with his rest.",
+  "He knew now that he did not live for himself and could not live for himself. He lived for God, for his soul, for people. When he forgot this, he was miserable. When he remembered it, he was at peace.",
+  "He had prayed before — mechanically, formally. Now he prayed because he did not know what else to do, which is perhaps the only honest kind of prayer.",
+  "All we can know is that we know nothing, and that is the highest degree of human wisdom.",
+  "God is the same for all. Why should he be mine and not yours? Why is he yours and not theirs? Levin sat with the question for a long time, and could not answer it, and was glad.",
+  /* On death */
+  "The candle by which she had been reading the book filled with troubles, triumphs, grief and joy flared up with greater brightness than she had ever known, then flickered, grew dim, and went out forever.",
+  "Death. What is death? For the first time he felt it. Not the word. Not the idea. He felt it the way you feel cold — not as a concept, but as something actually touching you.",
+  "He thought of all the people he had watched die slowly — their patience, their economy of breath, the way they stopped arguing with what was happening to them. He had always considered this weakness. Now he understood it was a kind of grace.",
+  "She felt that her position in the world was growing more and more precarious, and that the time was not far off when it would crumble. She did not think about this at length. She thought about other things, and beneath all of it, the crumbling continued.",
+  /* On class, marriage, family */
+  "The Shcherbatskys, the Oblonskys, the Karenins — each family represented a distinct theory of what life required of you. None of them could quite believe the others were living correctly.",
+  "Marriage to him had always seemed like an impossibility. Not because he feared it, but because he could never imagine himself in it — the ceremony, the rings, the legal documents — all of it describing something that felt wild and provisional and impossible to sign your name to.",
+  "The children grew, and Natasha loved them — but she felt sometimes that she was performing love, not feeling it, and the performance was so good that she could not remember where the feeling had gone.",
+  "Families are arranged by proximity, not by choice. We do not select our kin. We merely arrive among them, and the rest is negotiation.",
+  /* On thought, psychology, consciousness */
+  "Rummaging in our souls, we often dig up something that ought to have lain there unnoticed. The trouble with introspection is that it does not merely observe what is there — it changes it.",
+  "He had always been afraid that if he examined his own motives too closely, he would find nothing very creditable. Now he examined them. He was right.",
+  "There are ideas which come to you so clearly and forcefully that you are certain you have thought them before — that they were always there, and merely waiting for the right moment to arrange themselves into words.",
+  "There was in her an extraordinary refinement of feeling that made her understand at once not only what people said but what they did not say, and what they would have said if they had been able.",
+  "What he felt was not jealousy exactly — jealousy required a clearer shape. What he felt was a kind of weather — low pressure, indeterminate, the sense that something was about to change and that he had no control over what it would change into.",
+  "She was used to being observed, and she carried herself accordingly. It was only alone — in the carriage, or in the moment before sleep — that she allowed her face to settle into what it actually was.",
+  /* On seasons, weather, time */
+  "In autumn the world contracts. The light becomes economical. The trees rehearse a kind of patience. Levin felt it as he always did — a shortening of options, a narrowing toward the one thing most true.",
+  "Spring is a shock, every year. You know it is coming and it still startles you. The first warmth is an apology from the earth, and you accept it before you even know what it is for.",
+  "It was one of those evenings in midsummer when the world does not go dark so much as change color — the grass deepening to something almost black, the sky retaining a faint silver it refuses to give up entirely.",
+  "The winter had been long enough that everyone had forgotten what they had been planning to do in the spring. This was, Levin thought, probably good. Plans made before winter are rarely the right ones.",
+  "He walked home in the rain and felt better for it. There is something honest about rain — it does not ask you to feel any particular way. It simply continues.",
+  /* On happiness, suffering, meaning */
+  "There are no conditions of life to which a man cannot get accustomed, especially if he sees them accepted by everyone about him.",
+  "All the variety, all the charm, all the beauty of life is made up of light and shadow.",
+  "He had learnt that in spite of the sadness of that day, everything was going well and that the world was beautiful. This knowledge arrived in the body before it arrived in the mind — a loosening in the chest, a willingness to look up.",
+  "We are asleep until we fall in love. And then we are merely awake — which is not always better, but is at least truer.",
+  "There is no greatness where there is no simplicity, goodness and truth. And there is no simplicity that does not require years of complicated living to arrive at.",
+  "The highest ambition, he decided, was not to be extraordinary — it was to be genuinely present in an ordinary day. This was harder than it sounded. He tried it all morning and succeeded only in moments.",
+  "He was accustomed to the misery of other people — it was part of the landscape of the world, like poverty and weather. But happiness in other people still surprised him. He could not say why.",
+  "She had known for a long time that she was unhappy. What she had not known was that she had a choice about it. She was not sure she believed this now. But she held the idea carefully, the way you hold something fragile in both hands when you are walking on uneven ground.",
+  "Every lie you tell creates a small new room inside you, and you have to live there. After a while, you run out of space.",
+  /* On time, memory, change */
+  "He found that he could not think of a time in his life when he had not been moving toward this moment, though he could not have described the moment five minutes before it arrived.",
+  "Memory is not a place you visit. It is more like weather — it arrives without warning, alters the light, makes everything feel briefly familiar and briefly strange, and then it passes and you are left with whatever remains.",
+  "He had grown old enough to know that things do not end, they merely become less urgent. The old sorrows were still there. They had simply learned to be quiet.",
+  "She looked at the portrait of her younger self and felt nothing she expected to feel. She felt instead a profound tenderness, as though the girl in the portrait were a stranger who had suffered something she could not quite name.",
+  "Time does not move forward in a line. It accumulates. You carry all of it — every morning, every argument, every moment of unexpected beauty. You get heavier as you go, and this is not a bad thing.",
+  /* On the land, peasants, work */
+  "The peasant's relation to the land was not a theory — it was not even a feeling. It was something prior to feeling, something closer to weather or digestion, a fact of the body that the mind could only observe.",
+  "He had read hundreds of books about agriculture. He had spoken to professors, visited model farms, attended exhibitions. None of it had prepared him for the smell of turned earth in early April, or the way a well-thrown seed falls.",
+  "The men in the fields moved without haste and without idleness. Their bodies had long since settled into the rhythm of the work, and watching them, Levin felt the particular shame of a man who has spent his life thinking about things he could have simply done.",
+  "There is a kind of knowing that comes only from the hands. The scholar may know everything about grain and still hold it wrong. The peasant knows nothing about grain and holds it perfectly. This is not a paradox. It is a fact about knowledge.",
+  "After a day of labor in the sun, he sat in the shade and ate black bread and drank cold water from a stream, and he could not think of a single thing that was missing.",
+];
+let _akShuffled=[], _akShuffleIdx=0;
+function shuffleQuotes(){
+  _akShuffled=AK_QUOTES.map((_,i)=>i);
+  for(let i=_akShuffled.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [_akShuffled[i],_akShuffled[j]]=[_akShuffled[j],_akShuffled[i]];
+  }
+  _akShuffleIdx=0;
+}
+function randomQuote(){
+  if(_akShuffleIdx===0||_akShuffleIdx>=_akShuffled.length) shuffleQuotes();
+  return AK_QUOTES[_akShuffled[_akShuffleIdx++]];
+}
+
+/* ══════════════════════════════
+   OVERWORLD ENGINE
+   ══════════════════════════════ */
+const OW_W=3800, OW_H=3800;
+const OW_SPD=2.4;
+const OW_INTERACT_R=58;
+const OW_TILE=4;
+
+const OBJ_TYPES=[
+  'tree','rock','pond','brook','bird','flower','potato','farmhouse',
+  'tree','rock','flower','tree','tree','mushroom','fence','haystack',
+  'pond','bird','flower','tree','rock','potato','brook','mushroom',
+  'fence','tree','flower','haystack','rock','tree',
+];
+
+let owState=null;
+
+function owMkWorld(){
+  const objects=[];
+  const startX=OW_W/2, startY=OW_H/2;
+  const minDist=200;
+  const margin=140;
+  let attempts=0;
+  while(objects.length<38&&attempts<4000){
+    attempts++;
+    const x=margin+Math.random()*(OW_W-margin*2);
+    const y=margin+Math.random()*(OW_H-margin*2);
+    const distFromStart=Math.hypot(x-startX,y-startY);
+    if(distFromStart<150) continue;
+    let ok=true;
+    for(const o of objects){
+      if(Math.hypot(o.x-x,o.y-y)<minDist){ok=false;break;}
+    }
+    if(ok){
+      const type=OBJ_TYPES[Math.floor(Math.random()*OBJ_TYPES.length)];
+      objects.push({x,y,type,lastInteracted:0});
+    }
+  }
+  return objects;
+}
+
+function startOverworld(){
+  showScreen('s-overworld');
+  const canvas=document.getElementById('ow-canvas');
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+
+  // seed grass noise once
+  const noiseMap=[];
+  for(let i=0;i<60;i++) noiseMap.push({
+    x:Math.random()*OW_W, y:Math.random()*OW_H,
+    t:Math.floor(Math.random()*3) // 0=tuft A,1=tuft B,2=pebble
+  });
+
+  owState={
+    farmer:{x:OW_W/2,y:OW_H/2},
+    objects:owMkWorld(),
+    noiseMap,
+    joyDir:{x:0,y:0},
+    joyActive:false,
+    nearObj:null,
+    running:true,
+    raf:null,
+  };
+  // Always place cave fixed above spawn
+  owState.objects.push({x:OW_W/2,y:OW_H/2-220,type:'cave',lastInteracted:0});
+
+  setupJoystick();
+  syncOwRiverBtn();
+  document.getElementById('ow-quote-panel').style.display='none';
+  document.getElementById('ow-interact-btn').style.display='none';
+  owState.raf=requestAnimationFrame(owTick);
+}
+
+function owStop(){
+  if(!owState) return;
+  owState.running=false;
+  cancelAnimationFrame(owState.raf);
+  teardownJoystick();
+  owState=null;
+}
+
+/* ── joystick ── */
+let _joyTouchId=null, _joyBase=null;
+function setupJoystick(){
+  _joyBase=document.getElementById('ow-joystick-base');
+  _joyBase.addEventListener('touchstart',onJoyStart,{passive:false});
+  _joyBase.addEventListener('touchmove',onJoyMove,{passive:false});
+  _joyBase.addEventListener('touchend',onJoyEnd,{passive:false});
+  _joyBase.addEventListener('mousedown',onJoyMDown);
+  window.addEventListener('mousemove',onJoyMMove);
+  window.addEventListener('mouseup',onJoyMUp);
+}
+function teardownJoystick(){
+  if(!_joyBase) return;
+  _joyBase.removeEventListener('touchstart',onJoyStart);
+  _joyBase.removeEventListener('touchmove',onJoyMove);
+  _joyBase.removeEventListener('touchend',onJoyEnd);
+  _joyBase.removeEventListener('mousedown',onJoyMDown);
+  window.removeEventListener('mousemove',onJoyMMove);
+  window.removeEventListener('mouseup',onJoyMUp);
+  _joyBase=null;
+}
+function joyDirFrom(base,cx,cy){
+  const r=base.getBoundingClientRect();
+  const bx=r.left+r.width/2, by=r.top+r.height/2;
+  const dx=cx-bx, dy=cy-by;
+  const dist=Math.hypot(dx,dy);
+  const maxR=r.width/2-8;
+  const nx=dist>maxR?dx/dist:dx/maxR;
+  const ny=dist>maxR?dy/dist:dy/maxR;
+  const knobX=Math.min(maxR,dist)*nx;
+  const knobY=Math.min(maxR,dist)*ny;
+  const knob=document.getElementById('ow-joystick-knob');
+  knob.style.transform=`translate(calc(-50% + ${knobX}px),calc(-50% + ${knobY}px))`;
+  if(owState) owState.joyDir={x:nx,y:ny};
+}
+function joyReset(){
+  const knob=document.getElementById('ow-joystick-knob');
+  if(knob) knob.style.transform='translate(-50%,-50%)';
+  if(owState) owState.joyDir={x:0,y:0};
+  _joyTouchId=null;
+}
+function onJoyStart(e){e.preventDefault();const t=e.changedTouches[0];_joyTouchId=t.identifier;joyDirFrom(_joyBase,t.clientX,t.clientY);}
+function onJoyMove(e){e.preventDefault();for(const t of e.changedTouches){if(t.identifier===_joyTouchId)joyDirFrom(_joyBase,t.clientX,t.clientY);}}
+function onJoyEnd(e){for(const t of e.changedTouches){if(t.identifier===_joyTouchId)joyReset();}}
+let _mouseJoy=false;
+function onJoyMDown(e){_mouseJoy=true;joyDirFrom(_joyBase,e.clientX,e.clientY);}
+function onJoyMMove(e){if(_mouseJoy)joyDirFrom(_joyBase,e.clientX,e.clientY);}
+function onJoyMUp(){if(_mouseJoy){_mouseJoy=false;joyReset();}}
+
+/* ── game tick ── */
+function owTick(){
+  if(!owState||!owState.running) return;
+  const s=owState;
+  const d=s.joyDir;
+  if(d.x!==0||d.y!==0){
+    s.farmer.x=Math.max(16,Math.min(OW_W-16,s.farmer.x+d.x*OW_SPD));
+    s.farmer.y=Math.max(16,Math.min(OW_H-16,s.farmer.y+d.y*OW_SPD));
+  }
+
+  // find nearest object
+  let near=null,nearDist=Infinity;
+  for(const o of s.objects){
+    const dist=Math.hypot(o.x-s.farmer.x,o.y-s.farmer.y);
+    if(dist<OW_INTERACT_R&&dist<nearDist){near=o;nearDist=dist;}
+  }
+  s.nearObj=near;
+  const ibtn=document.getElementById('ow-interact-btn');
+  const panel=document.getElementById('ow-quote-panel');
+  if(panel.style.display==='none'){
+    if(near){
+      ibtn.style.display='block';
+      ibtn.textContent=near.type==='cave'?'Enter Cave':'Interact';
+    } else {
+      ibtn.style.display='none';
+    }
+  }
+
+  owDraw();
+  s.raf=requestAnimationFrame(owTick);
+}
+
+/* ── drawing ── */
+function owDraw(){
+  const s=owState;
+  const canvas=document.getElementById('ow-canvas');
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;
+  const camX=s.farmer.x-W/2;
+  const camY=s.farmer.y-H/2;
+
+  // grass base
+  ctx.fillStyle='#3A8820'; ctx.fillRect(0,0,W,H);
+
+  // grass variation tiles
+  const tX1=Math.floor(camX/OW_TILE), tX2=Math.ceil((camX+W)/OW_TILE)+1;
+  const tY1=Math.floor(camY/OW_TILE), tY2=Math.ceil((camY+H)/OW_TILE)+1;
+  const GCOLS=['#3A8820','#368018','#3C9022','#326A18'];
+  for(let tx=tX1;tx<tX2;tx++){
+    for(let ty=tY1;ty<tY2;ty++){
+      const h=((tx*73+ty*37)^(tx*19+ty*53))&3;
+      if(h===0) continue;
+      ctx.fillStyle=GCOLS[h];
+      ctx.fillRect(tx*OW_TILE-camX,ty*OW_TILE-camY,OW_TILE,OW_TILE);
+    }
+  }
+
+  // grass tufts/pebbles
+  for(const n of s.noiseMap){
+    const sx=n.x-camX, sy=n.y-camY;
+    if(sx<-8||sx>W+8||sy<-8||sy>H+8) continue;
+    if(n.t===0){ctx.fillStyle='#2A6010';ctx.fillRect(sx,sy,4,6);ctx.fillRect(sx+5,sy+2,4,5);}
+    else if(n.t===1){ctx.fillStyle='#286008';ctx.fillRect(sx,sy+3,3,4);ctx.fillRect(sx+3,sy,3,5);}
+    else{ctx.fillStyle='#5A5040';ctx.fillRect(sx,sy,5,4);}
+  }
+
+  // objects (back to front by y)
+  const sorted=[...s.objects].sort((a,b)=>a.y-b.y);
+  for(const o of sorted) owDrawObj(ctx,o.x-camX,o.y-camY,o.type,o===s.nearObj);
+
+  // farmer
+  owDrawFarmer(ctx,W/2,H/2);
+}
+
+function owDrawObj(ctx,x,y,type,highlight){
+  const xi=Math.floor(x), yi=Math.floor(y);
+  if(highlight){
+    ctx.fillStyle='rgba(255,215,0,0.18)';
+    ctx.beginPath();ctx.arc(xi,yi,38,0,Math.PI*2);ctx.fill();
+  }
+  if(type==='tree'){
+    // trunk
+    ctx.fillStyle='#5C3010'; ctx.fillRect(xi-4,yi-2,8,18);
+    ctx.fillStyle='#3C1A00'; ctx.fillRect(xi-2,yi-2,2,18);
+    // canopy layers
+    ctx.fillStyle='#2E7218'; ctx.fillRect(xi-20,yi-34,40,22);
+    ctx.fillStyle='#3A8C20'; ctx.fillRect(xi-16,yi-46,32,18);
+    ctx.fillStyle='#46A828'; ctx.fillRect(xi-10,yi-56,20,14);
+    ctx.fillStyle='#58C030'; ctx.fillRect(xi-4,yi-60,8,6);
+    // shade
+    ctx.fillStyle='#236010'; ctx.fillRect(xi-20,yi-34,6,22);ctx.fillRect(xi-16,yi-46,4,18);
+  } else if(type==='rock'){
+    ctx.fillStyle='#6A6458'; ctx.fillRect(xi-14,yi-8,28,16);
+    ctx.fillStyle='#7A7468'; ctx.fillRect(xi-12,yi-14,24,10);
+    ctx.fillStyle='#8A8478'; ctx.fillRect(xi-8,yi-17,16,6);
+    ctx.fillStyle='#908880'; ctx.fillRect(xi-10,yi-10,6,8);
+    ctx.fillStyle='#3A3428'; ctx.fillRect(xi+8,yi-6,4,10);ctx.fillRect(xi+4,yi-12,4,6);
+  } else if(type==='pond'){
+    ctx.fillStyle='#1848A0'; ctx.fillRect(xi-28,yi-14,56,28);
+    ctx.fillStyle='#1A58C0'; ctx.fillRect(xi-24,yi-18,48,20);
+    ctx.fillStyle='#2070D8'; ctx.fillRect(xi-18,yi-20,36,16);
+    ctx.fillStyle='#3888E8'; ctx.fillRect(xi-10,yi-18,20,10);
+    ctx.fillStyle='rgba(180,220,255,0.3)'; ctx.fillRect(xi-14,yi-16,10,5);
+  } else if(type==='brook'){
+    for(let i=0;i<6;i++){
+      const bx=xi-30+i*10, by=yi+(i%2===0?-3:3);
+      ctx.fillStyle='#2070C8'; ctx.fillRect(bx,by,10,8);
+      ctx.fillStyle='#3080D8'; ctx.fillRect(bx+1,by-1,8,4);
+    }
+  } else if(type==='bird'){
+    ctx.fillStyle='#2A1A10'; ctx.fillRect(xi-6,yi-3,6,3);ctx.fillRect(xi,yi-6,6,3);
+    ctx.fillStyle='#FF4400'; ctx.fillRect(xi-2,yi-3,3,3);
+  } else if(type==='flower'){
+    ctx.fillStyle='#2A8820'; ctx.fillRect(xi-2,yi,4,16);
+    const petal=Math.floor(((xi+yi)%4)); // deterministic color
+    const pc=['#E84888','#E8C020','#6060E8','#E86020'][petal];
+    ctx.fillStyle=pc;
+    ctx.fillRect(xi-8,yi-10,6,6);ctx.fillRect(xi+2,yi-10,6,6);
+    ctx.fillRect(xi-4,yi-16,6,6);ctx.fillRect(xi-2,yi-4,6,6);
+    ctx.fillStyle='#F8E020'; ctx.fillRect(xi-4,yi-12,8,6);
+  } else if(type==='potato'){
+    // mini potato (stage 6 pixel art, small)
+    const S=3, ox=xi-8*S/2, oy=yi-8*S/2;
+    [[5,1,6,2,'#5ABE48'],[3,2,10,3,'#3A9030'],[2,3,12,3,'#226818'],
+     [3,5,10,2,'#2E7822'],[3,6,10,5,'#D4700E'],[2,7,12,4,'#C05808'],
+     [3,11,10,2,'#A04000'],[5,8,2,2,'#F39C12'],[9,9,2,2,'#F39C12'],[7,7,2,2,'#EAA020']
+    ].forEach(([px,py,pw,ph,c])=>{ctx.fillStyle=c;ctx.fillRect(ox+px*S,oy+py*S,pw*S,ph*S);});
+  } else if(type==='farmhouse'){
+    // walls
+    ctx.fillStyle='#C8904A'; ctx.fillRect(xi-18,yi-12,36,24);
+    ctx.fillStyle='#A87030'; ctx.fillRect(xi-18,yi-12,5,24);
+    // roof
+    ctx.fillStyle='#8A2818';
+    for(let r=0;r<14;r++) ctx.fillRect(xi-18+r,yi-12-r,36-r*2,4);
+    // door
+    ctx.fillStyle='#5C3010'; ctx.fillRect(xi-5,yi,10,12);
+    // window
+    ctx.fillStyle='#A8D0E8'; ctx.fillRect(xi+6,yi-8,8,8);
+    ctx.fillStyle='#5C3010'; ctx.fillRect(xi+9,yi-8,2,8);ctx.fillRect(xi+6,yi-5,8,2);
+  } else if(type==='mushroom'){
+    // stem
+    ctx.fillStyle='#D8C8A0'; ctx.fillRect(xi-5,yi,10,14);
+    ctx.fillStyle='#C0A880'; ctx.fillRect(xi-5,yi,3,14);
+    // cap
+    ctx.fillStyle='#C83020'; ctx.fillRect(xi-14,yi-14,28,18);
+    ctx.fillStyle='#E84030'; ctx.fillRect(xi-12,yi-20,24,10);
+    ctx.fillStyle='#D03828'; ctx.fillRect(xi-6,yi-24,12,6);
+    // spots
+    ctx.fillStyle='#F8F0E0';
+    ctx.fillRect(xi-8,yi-16,5,5); ctx.fillRect(xi+4,yi-18,4,4); ctx.fillRect(xi-2,yi-10,5,5);
+    // shade
+    ctx.fillStyle='#A02018'; ctx.fillRect(xi-14,yi-14,5,18);
+  } else if(type==='fence'){
+    ctx.fillStyle='#A87840';
+    for(let f=0;f<4;f++){
+      const fx=xi-18+f*12;
+      ctx.fillRect(fx,yi-18,5,26);
+      ctx.fillRect(fx,yi-24,5,8); // pointed top
+      ctx.fillRect(fx+1,yi-28,3,6);
+      ctx.fillRect(fx+2,yi-30,1,4);
+    }
+    ctx.fillStyle='#9A6C30';
+    ctx.fillRect(xi-18,yi-12,48,5);
+    ctx.fillRect(xi-18,yi,48,5);
+  } else if(type==='haystack'){
+    ctx.fillStyle='#C8A020'; ctx.fillRect(xi-20,yi,40,18);
+    ctx.fillStyle='#D4B030'; ctx.fillRect(xi-16,yi-10,32,14);
+    ctx.fillStyle='#DCBE38'; ctx.fillRect(xi-10,yi-18,20,12);
+    ctx.fillStyle='#E0C840'; ctx.fillRect(xi-4,yi-22,8,6);
+    ctx.fillStyle='#B89018';
+    for(let s=0;s<5;s++) ctx.fillRect(xi-18+s*8,yi+2,3,14);
+    for(let s=0;s<4;s++) ctx.fillRect(xi-12+s*7,yi-8,3,10);
+  } else if(type==='cave'){
+    // cave mouth — stone arch built into hillside
+    ctx.fillStyle='#5A5048'; ctx.fillRect(xi-36,yi-8,72,24); // ground mound
+    ctx.fillStyle='#6A6058'; ctx.fillRect(xi-30,yi-22,60,18); // mound top
+    ctx.fillStyle='#7A7068'; ctx.fillRect(xi-20,yi-30,40,12); // peak
+    // dark interior
+    ctx.fillStyle='#0A0806'; ctx.fillRect(xi-18,yi-20,36,28);
+    // arch stones
+    ctx.fillStyle='#8A8078';
+    ctx.fillRect(xi-22,yi-24,6,32); // left pillar
+    ctx.fillRect(xi+16,yi-24,6,32); // right pillar
+    ctx.fillRect(xi-22,yi-28,44,8); // lintel
+    ctx.fillStyle='#9A9088';
+    ctx.fillRect(xi-20,yi-26,4,4);
+    ctx.fillRect(xi+16,yi-26,4,4);
+    ctx.fillRect(xi-14,yi-30,6,4);
+    ctx.fillRect(xi+8,yi-30,6,4);
+    // dim glow from inside
+    ctx.fillStyle='rgba(180,140,60,0.08)';
+    ctx.fillRect(xi-14,yi-18,28,22);
+    if(highlight){
+      ctx.fillStyle='rgba(255,215,0,0.22)';
+      ctx.beginPath();ctx.arc(xi,yi,46,0,Math.PI*2);ctx.fill();
+    }
+  }
+}
+
+function owDrawFarmer(ctx,x,y){
+  const xi=Math.floor(x), yi=Math.floor(y);
+  const S=4;
+  // boots
+  ctx.fillStyle='#2A1800';
+  ctx.fillRect(xi-6,yi+14,8,6); ctx.fillRect(xi+2,yi+14,8,6);
+  // legs
+  ctx.fillStyle='#4A3418';
+  ctx.fillRect(xi-6,yi+6,7,10); ctx.fillRect(xi+3,yi+6,7,10);
+  // body/shirt
+  ctx.fillStyle='#4A7A3A';
+  ctx.fillRect(xi-8,yi-4,18,12);
+  // arms
+  ctx.fillRect(xi-12,yi-4,5,8); ctx.fillRect(xi+10,yi-4,5,8);
+  // hands
+  ctx.fillStyle='#D09060';
+  ctx.fillRect(xi-13,yi+2,5,5); ctx.fillRect(xi+11,yi+2,5,5);
+  // head (obscured by hat)
+  ctx.fillStyle='#D09060';
+  ctx.fillRect(xi-5,yi-14,12,12);
+  // straw hat brim
+  ctx.fillStyle='#C8A020';
+  ctx.fillRect(xi-14,yi-16,30,5);
+  // hat crown
+  ctx.fillStyle='#D4B030';
+  ctx.fillRect(xi-9,yi-30,20,16);
+  // hat band
+  ctx.fillStyle='#A07010';
+  ctx.fillRect(xi-9,yi-16,20,4);
+  // hat highlight
+  ctx.fillStyle='#E0C040';
+  ctx.fillRect(xi-7,yi-28,5,6);
+}
+
+/* ── river sync from overworld ── */
+function syncOwRiverBtn(){
+  const btn=document.getElementById('ow-river-btn');
+  if(!btn) return;
+  if(G.riverActive){btn.textContent='River is overflowing.';btn.className='btn active-river sm';}
+  else             {btn.textContent='River is dormant...';  btn.className='btn dim sm';}
+}
+function owClickRiver(){
+  if(!G.riverActive){toast('Wait for the tides to rise.');return;}
+  owStop();
+  clearTimeout(_riverActive);G.riverActive=false;updateRiverBtn(false);
+  startRiverGame();
+}
+
+/* ── interact ── */
+function owInteract(){
+  if(!owState||!owState.nearObj) return;
+  const o=owState.nearObj;
+  if(o.type==='cave'){ enterCave(); return; }
+  const now=Date.now();
+  if(now-o.lastInteracted<20000){
+    toast('Return some other time.');
+    return;
+  }
+  o.lastInteracted=now;
+  const panel=document.getElementById('ow-quote-panel');
+  document.getElementById('ow-quote-text').textContent=randomQuote();
+  panel.style.display='block';
+  document.getElementById('ow-interact-btn').style.display='none';
+}
+function owCloseQuote(){
+  document.getElementById('ow-quote-panel').style.display='none';
+}
+
+/* keep overworld river button in sync when river activates/deactivates */
+const _origActivate=()=>{};  // placeholder; we patch updateRiverBtn below
+
+/* ══════════════════════════════
+   CAVE / WIZARD QUEST SYSTEM
+   ══════════════════════════════ */
+const QUESTS=[
+  {book:'Anna Karenina',            answer:'tolstoy'},
+  {book:'The Brothers Karamazov',   answer:'dostoevsky'},
+  {book:'Fathers and Sons',         answer:'turgenev'},
+  {book:'Yevgeny Onegin',           answer:'pushkin'},
+  {book:'Light in August',          answer:'faulkner'},
+  {book:'Death on the Installment Plan', answer:'celine'},
+  {book:'Tropic of Cancer',         answer:'miller'},
+  {book:'Naked Lunch',              answer:'burroughs'},
+  {book:'Play It as It Lays',       answer:'didion'},
+  {book:'Hadji Murat',              answer:'tolstoy', requireCats:5},
+];
+
+let caveQuestActive=false;
+
+function enterCave(){
+  if(G.goldenCats<2){toast('Need 2 golden cats to enter cave.');return;}
+  owStop();
+  showScreen('s-cave');
+  drawCaveBackground();
+  caveQuestActive=false;
+  document.getElementById('cave-quest-area').style.display='none';
+  document.getElementById('cave-accept-btn').style.display='none';
+
+  const done=G.questsCompleted;
+  if(done>=QUESTS.length){
+    // all quests done
+    setCaveText('wizard','Congratulations.');
+    return;
+  }
+  if(G.questDoneThisVisit){
+    setCaveText('wizard','Return some other time for your next task.');
+    return;
+  }
+  const next=QUESTS[done];
+  if(next.requireCats&&G.goldenCats<next.requireCats){
+    setCaveText('wizard','You are not yet ready for the final task. Return when you have all 5 golden cats.');
+    return;
+  }
+  setCaveText('wizard','I have a quest for you. Do you accept?');
+  document.getElementById('cave-accept-btn').style.display='inline-block';
+}
+
+function leaveCave(){
+  showScreen('s-overworld');
+  startOverworld();
+}
+
+function setCaveText(speaker,text){
+  document.getElementById('cave-speaker').textContent=speaker;
+  document.getElementById('cave-text').textContent=text;
+}
+
+function acceptQuest(){
+  const done=G.questsCompleted;
+  const q=QUESTS[done];
+  document.getElementById('cave-accept-btn').style.display='none';
+  // Build prompt with book title in italics via unicode (plain text workaround: use em dashes and quotes)
+  document.getElementById('cave-speaker').textContent='wizard';
+  // We set innerHTML here for the italic book title only
+  document.getElementById('cave-text').innerHTML=
+    'What is the last name of the author who wrote <em>'+q.book+'</em>?';
+  document.getElementById('cave-quest-area').style.display='block';
+  document.getElementById('cave-answer').value='';
+  setTimeout(()=>document.getElementById('cave-answer').focus(),200);
+  caveQuestActive=true;
+}
+
+function submitQuest(){
+  if(!caveQuestActive) return;
+  const done=G.questsCompleted;
+  const q=QUESTS[done];
+  const ans=document.getElementById('cave-answer').value.trim().toLowerCase();
+  if(ans===q.answer){
+    const water=done+1; // quest 1 = 1 water, quest 2 = 2, etc.
+    G.water+=water;
+    G.questsCompleted++;
+    G.questDoneThisVisit=true;
+    caveQuestActive=false;
+    document.getElementById('cave-quest-area').style.display='none';
+    if(G.questsCompleted>=QUESTS.length){
+      setCaveText('wizard','Congratulations.');
+    } else {
+      setCaveText('wizard','Correct. +'+water+' water. Return some other time for your next task.');
+    }
+    render(); autoSave();
+  } else {
+    document.getElementById('cave-answer').value='';
+    setCaveText('wizard','That is not right. Try again.');
+    document.getElementById('cave-text').innerHTML=
+      'That is not right. What is the last name of the author who wrote <em>'+q.book+'</em>?';
+  }
+}
+
+function cancelQuest(){
+  caveQuestActive=false;
+  document.getElementById('cave-quest-area').style.display='none';
+  document.getElementById('cave-accept-btn').style.display='none';
+  setCaveText('wizard','Very well. Return when you are ready.');
+}
+
+function drawCaveBackground(){
+  const canvas=document.getElementById('cave-canvas');
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+
+  // dim cave walls
+  ctx.fillStyle='#0C0A06'; ctx.fillRect(0,0,W,H);
+  // rough stone texture
+  const stoneColors=['#1A1610','#141008','#1E1A12','#120E08'];
+  for(let i=0;i<120;i++){
+    const sx=(Math.sin(i*137.5)*0.5+0.5)*W;
+    const sy=(Math.cos(i*73.1)*0.5+0.5)*H*0.6;
+    const sw=12+((i*31)%24);
+    const sh=8+((i*17)%12);
+    ctx.fillStyle=stoneColors[i%stoneColors.length];
+    ctx.fillRect(sx,sy,sw,sh);
+  }
+  // torch glow top left
+  ctx.fillStyle='rgba(200,120,20,0.12)';
+  ctx.beginPath();ctx.arc(W*0.15,H*0.22,70,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='rgba(200,120,20,0.07)';
+  ctx.beginPath();ctx.arc(W*0.15,H*0.22,110,0,Math.PI*2);ctx.fill();
+  // torch pixels
+  const tx=Math.floor(W*0.15), ty=Math.floor(H*0.22);
+  ctx.fillStyle='#5C3010'; ctx.fillRect(tx-4,ty+4,8,18);
+  ctx.fillStyle='#E87820'; ctx.fillRect(tx-5,ty-10,10,14);
+  ctx.fillStyle='#F8C040'; ctx.fillRect(tx-3,ty-14,6,8);
+  ctx.fillStyle='#FFF0A0'; ctx.fillRect(tx-1,ty-16,3,4);
+
+  // draw wizard in center-ish
+  drawWizard(ctx, Math.floor(W*0.5), Math.floor(H*0.28));
+}
+
+function drawWizard(ctx,x,y){
+  // staff
+  ctx.fillStyle='#6A4820'; ctx.fillRect(x+20,y-40,4,80);
+  ctx.fillStyle='#5040A0'; ctx.fillRect(x+17,y-58,10,12); // crystal base
+  ctx.fillStyle='#8080E8'; ctx.fillRect(x+18,y-66,8,10);  // crystal
+  ctx.fillStyle='#A0A0FF'; ctx.fillRect(x+20,y-70,4,6);   // tip
+  ctx.fillStyle='rgba(120,120,255,0.35)';
+  ctx.beginPath();ctx.arc(x+22,y-62,14,0,Math.PI*2);ctx.fill();
+
+  // robe body
+  ctx.fillStyle='#484848'; ctx.fillRect(x-16,y-10,32,50);
+  ctx.fillStyle='#383838'; ctx.fillRect(x-16,y-10,8,50);
+  ctx.fillStyle='#585858'; ctx.fillRect(x+8,y-10,8,50);
+  // robe bottom flair
+  ctx.fillStyle='#404040'; ctx.fillRect(x-20,y+30,40,12);
+  ctx.fillStyle='#383838'; ctx.fillRect(x-22,y+36,44,8);
+
+  // sleeves
+  ctx.fillStyle='#484848';
+  ctx.fillRect(x-26,y-8,12,30);  // left sleeve
+  ctx.fillRect(x+14,y-8,12,30);  // right sleeve
+  // hands
+  ctx.fillStyle='#C09070';
+  ctx.fillRect(x-27,y+18,10,8);
+  ctx.fillRect(x+18,y+18,10,8);
+
+  // head
+  ctx.fillStyle='#C09070'; ctx.fillRect(x-10,y-32,20,22);
+  // eyes
+  ctx.fillStyle='#1A1008'; ctx.fillRect(x-6,y-24,4,4); ctx.fillRect(x+2,y-24,4,4);
+  // long white beard
+  ctx.fillStyle='#E8E8E8'; ctx.fillRect(x-10,y-14,20,36);
+  ctx.fillStyle='#D8D8D8'; ctx.fillRect(x-8,y-14,4,36);
+  ctx.fillStyle='#F0F0F0'; ctx.fillRect(x+4,y-14,4,32);
+  // beard taper
+  ctx.fillStyle='#0C0A06';
+  ctx.fillRect(x-10,y+18,4,4); ctx.fillRect(x+6,y+18,4,4);
+  ctx.fillRect(x-10,y+22,8,4); ctx.fillRect(x+2,y+22,8,4);
+
+  // hat (tall gray)
+  ctx.fillStyle='#686868'; ctx.fillRect(x-12,y-58,24,28); // crown
+  ctx.fillStyle='#787878'; ctx.fillRect(x-12,y-58,6,28);  // highlight
+  ctx.fillStyle='#585858'; ctx.fillRect(x+6,y-58,6,28);   // shadow
+  ctx.fillStyle='#505050'; ctx.fillRect(x-20,y-34,40,6);  // brim
+  // hat tip bent slightly
+  ctx.fillStyle='#686868'; ctx.fillRect(x-8,y-72,16,16);
+  ctx.fillStyle='#787878'; ctx.fillRect(x-4,y-78,10,10);
+  ctx.fillStyle='#606060'; ctx.fillRect(x+2,y-80,6,6);
+  // hat band
+  ctx.fillStyle='#8060A0'; ctx.fillRect(x-12,y-36,24,4);
+  // small star on hat
+  ctx.fillStyle='#C0C0F0';
+  ctx.fillRect(x-2,y-52,5,1); ctx.fillRect(x,y-54,1,5);
+}
+
+/* ══════════════════════════════
+   GREENHOUSE
+   ══════════════════════════════ */
+const GH_ITEMS={
+  daisy:    {name:'Daisy',         type:'Flower', cost:2},
+  tulip:    {name:'Tulip',         type:'Flower', cost:5},
+  sunflower:{name:'Sunflower',     type:'Flower', cost:8},
+  rose:     {name:'Rose',          type:'Flower', cost:15},
+  lavender: {name:'Lavender',      type:'Flower', cost:22},
+  orchid:   {name:'Orchid',        type:'Flower', cost:40},
+  spud:     {name:'Sweet Potato',  type:'Potato', cost:6},
+  goldspud: {name:'Gold Potato',   type:'Potato', cost:28},
+  ramp:     {name:'Ramp',          type:'Plant',  cost:10},
+  endive:   {name:'Endive',        type:'Plant',  cost:18},
+};
+
+let ghSelectedPot=null, ghArrangeSlot=null, _ghCanvas=null, _ghCtx=null;
+
+function updateGhBtn(){
+  const btn=document.getElementById('gh-btn');
+  if(!btn) return;
+  btn.style.opacity=G.goldenCats>=4?'1':'.5';
+}
+
+function goGreenhouse(){
+  if(G.goldenCats<4){toast('Need 4 golden cats to enter greenhouse.');return;}
+  initAudio(); ghSelectedPot=null;
+  document.getElementById('gh-pot-panel').style.display='none';
+  showScreen('s-greenhouse');
+  _ghCanvas=document.getElementById('gh-canvas');
+  _ghCanvas.width=window.innerWidth; _ghCanvas.height=window.innerHeight;
+  _ghCtx=_ghCanvas.getContext('2d');
+  ghDrawScene(); ghCreatePotRegions();
+}
+function leaveGreenhouse(){ showScreen('s-farm'); render(); }
+
+function ghPotPositions(W,H){
+  const rows=[H*0.40,H*0.60,H*0.78];
+  const cols=[W*0.22,W*0.50,W*0.78];
+  const out=[];
+  for(const sy of rows) for(const sx of cols) out.push({cx:Math.floor(sx),sy:Math.floor(sy)});
+  return out;
+}
+
+function ghCreatePotRegions(){
+  const layer=document.getElementById('gh-pots-layer');
+  layer.innerHTML='';
+  const W=_ghCanvas.width, H=_ghCanvas.height;
+  ghPotPositions(W,H).forEach((pos,i)=>{
+    const div=document.createElement('div');
+    div.style.cssText=`position:absolute;left:${pos.cx-32}px;top:${pos.sy-72}px;width:64px;height:82px;cursor:pointer;z-index:6;`;
+    div.onclick=()=>ghTapPot(i);
+    layer.appendChild(div);
+  });
+}
+
+function ghTapPot(i){
+  ghSelectedPot=i;
+  document.getElementById('gh-pot-label').textContent='Pot '+(i+1);
+  document.getElementById('gh-pot-panel').style.display='block';
+}
+function ghHidePanel(){ document.getElementById('gh-pot-panel').style.display='none'; ghSelectedPot=null; }
+
+function ghGoStore(){
+  ghHidePanel();
+  document.getElementById('gh-store-water').textContent='Water available: '+G.water;
+  ghRenderStore();
+  showScreen('s-gh-store');
+}
+function ghLeaveStore(){
+  showScreen('s-greenhouse');
+  ghDrawScene(); ghCreatePotRegions();
+}
+function ghRenderStore(){
+  const list=document.getElementById('gh-store-list');
+  list.innerHTML='';
+  Object.entries(GH_ITEMS).forEach(([id,item])=>{
+    const row=document.createElement('div');
+    row.className='shop-item';
+    row.innerHTML=`<div class="shop-info"><strong>${item.name}</strong>${item.type} &mdash; ${item.cost} Water</div>`;
+    const btn=document.createElement('button');
+    btn.className='btn sm'; btn.textContent='Buy';
+    btn.onclick=()=>ghBuyItem(id);
+    row.appendChild(btn);
+    list.appendChild(row);
+  });
+}
+function ghBuyItem(id){
+  const item=GH_ITEMS[id];
+  if(G.water<item.cost){toast('Need '+item.cost+' water.');return;}
+  G.water-=item.cost;
+  G.ghInventory[id]=(G.ghInventory[id]||0)+1;
+  document.getElementById('gh-store-water').textContent='Water available: '+G.water;
+  toast('Purchased '+item.name+'.');autoSave();
+}
+
+function ghOpenArrange(){
+  if(ghSelectedPot===null) return;
+  const savedPot=ghSelectedPot;
+  const pot=G.ghPots[savedPot];
+  const hasInv=Object.values(G.ghInventory).some(v=>v>0);
+  const hasPot=pot.some(s=>s!==null);
+  if(!hasInv&&!hasPot){toast('Visit the store to purchase plants first.');return;}
+  document.getElementById('gh-pot-panel').style.display='none';
+  // restore after panel hide (don't null it)
+  ghSelectedPot=savedPot;
+  document.getElementById('gh-arrange-title').textContent='Arrange Pot '+(ghSelectedPot+1);
+  ghRenderArrangeSlots();
+  openOverlay('ov-gh-arrange');
+}
+
+function ghRenderArrangeSlots(){
+  const pot=G.ghPots[ghSelectedPot];
+  const div=document.getElementById('gh-arrange-slots');
+  div.innerHTML='';
+  for(let s=0;s<3;s++){
+    const id=pot[s];
+    const slot=document.createElement('div');
+    slot.className='gh-slot';
+    if(id){
+      const itm=GH_ITEMS[id];
+      slot.innerHTML=`<span style="font-family:'VT323',monospace;font-size:15px;color:#3A1800;text-align:center;line-height:1.2">${itm.name}</span>`;
+      const rb=document.createElement('button');
+      rb.className='btn red sm'; rb.style.cssText='font-size:11px;padding:3px 6px;margin-top:2px';
+      rb.textContent='Remove';
+      const ss=s;
+      rb.onclick=e=>{e.stopPropagation();ghRemoveSlot(ss);};
+      slot.appendChild(rb);
+    } else {
+      slot.innerHTML=`<span style="font-family:'VT323',monospace;font-size:13px;color:#9A7050;text-align:center">empty<br>tap to add</span>`;
+      const ss=s;
+      slot.onclick=()=>ghPickSlot(ss);
+    }
+    div.appendChild(slot);
+  }
+}
+
+function ghRemoveSlot(s){
+  const id=G.ghPots[ghSelectedPot][s];
+  if(id){ G.ghInventory[id]=(G.ghInventory[id]||0)+1; G.ghPots[ghSelectedPot][s]=null; }
+  ghRenderArrangeSlots(); ghDrawScene(); autoSave();
+}
+
+function ghPickSlot(s){
+  ghArrangeSlot=s; ghRenderInventoryPicker(); openOverlay('ov-gh-inventory');
+}
+function ghRenderInventoryPicker(){
+  const list=document.getElementById('gh-inventory-list');
+  list.innerHTML='';
+  const avail=Object.entries(G.ghInventory).filter(([,c])=>c>0);
+  if(!avail.length){
+    list.innerHTML='<p style="font-family:VT323,monospace;font-size:18px;color:#7A3A18;text-align:center">No plants in inventory.</p>';
+    return;
+  }
+  avail.forEach(([id,count])=>{
+    const itm=GH_ITEMS[id];
+    const row=document.createElement('div');
+    row.className='shop-item'; row.style.cursor='pointer';
+    row.innerHTML=`<div class="shop-info"><strong>${itm.name}</strong>In stock: ${count}</div>`;
+    row.onclick=()=>ghPlaceItem(id);
+    list.appendChild(row);
+  });
+}
+function ghPlaceItem(id){
+  if(ghSelectedPot===null||ghArrangeSlot===null) return;
+  G.ghInventory[id]--;
+  if(G.ghInventory[id]<=0) delete G.ghInventory[id];
+  G.ghPots[ghSelectedPot][ghArrangeSlot]=id;
+  closeOverlay('ov-gh-inventory');
+  ghArrangeSlot=null;
+  ghRenderArrangeSlots();
+  ghDrawScene();autoSave();
+}
+
+/* ── scene drawing ── */
+function ghDrawScene(){
+  if(!_ghCtx) return;
+  const ctx=_ghCtx, W=_ghCanvas.width, H=_ghCanvas.height;
+
+  // Sky outside glass
+  ctx.fillStyle='#87CEEB'; ctx.fillRect(0,0,W,H);
+  // Sun (left side, clear of buttons)
+  ctx.fillStyle='#FFF8C0';
+  ctx.beginPath();ctx.arc(W*0.14,H*0.09,24,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='rgba(255,248,180,0.25)';
+  ctx.beginPath();ctx.arc(W*0.14,H*0.09,40,0,Math.PI*2);ctx.fill();
+
+  // Glass panel grid (top 45% of screen)
+  const GH=H*0.45;
+  const pw=58,ph=65;
+  for(let gx=0;gx<W;gx+=pw){
+    for(let gy=0;gy<GH;gy+=ph){
+      ctx.fillStyle=(Math.floor(gx/pw)+Math.floor(gy/ph))%2===0?'rgba(255,255,255,0.12)':'rgba(200,240,255,0.08)';
+      ctx.fillRect(gx,gy,pw,ph);
+    }
+  }
+  // Glass frame
+  ctx.fillStyle='rgba(255,255,255,0.55)';
+  for(let gx=0;gx<=W;gx+=pw) ctx.fillRect(gx-1,0,3,GH);
+  for(let gy=0;gy<=GH;gy+=ph) ctx.fillRect(0,gy-1,W,3);
+  // Top ridge bar
+  ctx.fillStyle='rgba(255,255,255,0.7)'; ctx.fillRect(0,GH-3,W,5);
+
+  // Interior floor / lower section
+  ctx.fillStyle='#8A7868'; ctx.fillRect(0,GH,W,H-GH);
+  // Floor tiles
+  const ts=38;
+  for(let tx=0;tx<W;tx+=ts){
+    for(let ty=Math.floor(GH);ty<H;ty+=ts){
+      ctx.fillStyle=(Math.floor(tx/ts)+Math.floor(ty/ts))%2===0?'#988070':'#8A7868';
+      ctx.fillRect(tx,ty,ts,ts);
+    }
+  }
+  // Floor/wall shadow
+  ctx.fillStyle='rgba(0,0,0,0.15)'; ctx.fillRect(0,GH,W,8);
+
+  // Potted background ferns on sides
+  ghDrawBackgroundFernPot(ctx,Math.floor(W*0.06),Math.floor(H*0.52),H);
+  ghDrawBackgroundFernPot(ctx,Math.floor(W*0.94),Math.floor(H*0.52),H);
+
+  // Piano in background center
+  ghDrawPiano(ctx,Math.floor(W*0.50),Math.floor(H*0.52),W);
+
+  // Draw shelves + pots
+  const positions=ghPotPositions(W,H);
+  const shelfYs=[...new Set(positions.map(p=>p.sy))];
+  shelfYs.forEach(sy=>{
+    ctx.fillStyle='#7A5020'; ctx.fillRect(W*0.05,sy-4,W*0.90,8);
+    ctx.fillStyle='#9A6828'; ctx.fillRect(W*0.05,sy-4,W*0.90,3);
+    [W*0.15,W*0.50,W*0.85].forEach(bx=>{
+      ctx.fillStyle='#6A4010'; ctx.fillRect(bx-4,sy,8,18);
+    });
+  });
+  positions.forEach((pos,i)=>ghDrawPot(ctx,pos.cx,pos.sy,G.ghPots[i],i===ghSelectedPot));
+}
+
+function ghDrawBackgroundFernPot(ctx,x,y,H){
+  const xi=Math.floor(x),yi=Math.floor(y);
+  // pot
+  const pw=52,ph=34,rw=58;
+  ctx.fillStyle='#C8603A'; ctx.fillRect(xi-pw/2,yi,pw,ph);
+  ctx.fillStyle='#A04828'; ctx.fillRect(xi-pw/2,yi,7,ph);
+  ctx.fillStyle='#E07850'; ctx.fillRect(xi+pw/2-7,yi,4,ph);
+  ctx.fillStyle='#883820'; ctx.fillRect(xi-pw/2+4,yi+ph-4,pw-8,4);
+  ctx.fillStyle='#A04828'; ctx.fillRect(xi-rw/2,yi-6,rw,8);
+  ctx.fillStyle='#C87040'; ctx.fillRect(xi-rw/2,yi-6,rw,3);
+  ctx.fillStyle='#4A2810'; ctx.fillRect(xi-pw/2+2,yi+2,pw-4,9);
+  // simple thick trunk
+  const trunkH=Math.floor(H*0.09);
+  ctx.fillStyle='#5C3010'; ctx.fillRect(xi-4,yi-trunkH,8,trunkH);
+  ctx.fillStyle='#3C1800'; ctx.fillRect(xi-4,yi-trunkH,3,trunkH);
+  // round bushy top — layered circles of pixel blocks
+  const br=Math.floor(H*0.07);
+  const by=yi-trunkH-br+4;
+  const layers=[
+    {r:br,   c:'#2E7018'},
+    {r:br-4, c:'#3A8820'},
+    {r:br-8, c:'#4AA030'},
+    {r:br-13,c:'#56B838'},
+  ];
+  layers.forEach(({r,c})=>{
+    ctx.fillStyle=c;
+    for(let rx=-r;rx<=r;rx+=4){
+      for(let ry=-r;ry<=r;ry+=4){
+        if(rx*rx+ry*ry<=r*r) ctx.fillRect(xi+rx-2,by+ry-2,5,5);
+      }
+    }
+  });
+  // highlight dot top-left
+  ctx.fillStyle='#70D040';
+  ctx.fillRect(xi-br/2,by-br/2,5,5);
+  ctx.fillRect(xi-br/3,by-br/2-4,4,4);
+}
+
+function ghDrawPiano(ctx,x,y,W){
+  const pw=Math.min(150,W*0.28);
+  ctx.fillStyle='#181818'; ctx.fillRect(x-pw/2,y-48,pw,42);
+  ctx.fillStyle='#101010'; ctx.fillRect(x-pw/2,y-46,7,40);
+  // lid
+  ctx.fillStyle='#222';
+  ctx.beginPath();ctx.moveTo(x-pw/2,y-48);ctx.lineTo(x+pw/2,y-48);ctx.lineTo(x+pw/2-16,y-76);ctx.lineTo(x-pw/2,y-48);ctx.fill();
+  ctx.fillStyle='#303030'; ctx.fillRect(x-pw/2,y-50,pw,4);
+  // keys
+  const kc=14, kw=Math.floor(pw*0.7/kc);
+  const ks=x-kw*kc/2;
+  for(let k=0;k<kc;k++){
+    ctx.fillStyle=k%7===2||k%7===5?'#181818':'#E8E8D8';
+    ctx.fillRect(ks+k*kw,y-8,kw-1,8);
+  }
+  // legs
+  ctx.fillStyle='#181818';
+  ctx.fillRect(x-pw/2+4,y-6,6,22); ctx.fillRect(x+pw/2-10,y-6,6,22);
+}
+
+function ghDrawPot(ctx,cx,sy,potData,selected){
+  const xi=Math.floor(cx);
+  const potW=46, potH=28, rimW=52;
+  if(selected){ctx.fillStyle='rgba(255,215,0,0.2)';ctx.beginPath();ctx.arc(xi,sy-20,36,0,Math.PI*2);ctx.fill();}
+  // soilY nudged down so stems sit at rim rather than floating above
+  const soilY=sy-potH+2;
+  // draw items: all rooted at soil level, offset horizontally only
+  const items=potData.filter(Boolean);
+  const xOffsets=[-13,0,13];
+  items.forEach((id,idx)=>ghDrawPotItem(ctx,xi+xOffsets[idx],soilY,id));
+  // pot body (drawn after plants so rim covers stem bases neatly)
+  ctx.fillStyle='#C8603A'; ctx.fillRect(xi-potW/2,sy-potH,potW,potH);
+  ctx.fillStyle='#A04828'; ctx.fillRect(xi-potW/2,sy-potH,7,potH);
+  ctx.fillStyle='#E07850'; ctx.fillRect(xi+potW/2-7,sy-potH,4,potH);
+  ctx.fillStyle='#883820'; ctx.fillRect(xi-potW/2+4,sy-3,potW-8,4);
+  // rim
+  ctx.fillStyle='#A04828'; ctx.fillRect(xi-rimW/2,sy-potH-5,rimW,8);
+  ctx.fillStyle='#C87040'; ctx.fillRect(xi-rimW/2,sy-potH-5,rimW,3);
+  // soil
+  ctx.fillStyle='#4A2810'; ctx.fillRect(xi-potW/2+2,sy-potH+2,potW-4,8);
+}
+
+function ghDrawPotItem(ctx,x,y,id){
+  const xi=Math.floor(x),yi=Math.floor(y);
+  if(id==='daisy'){
+    ctx.fillStyle='#3A8820';ctx.fillRect(xi-1,yi-20,3,20);
+    const px=[[-6,-4],[6,-4],[0,-8],[-4,-7],[4,-7]];
+    ctx.fillStyle='#F8F8F8';px.forEach(([dx,dy])=>ctx.fillRect(xi+dx-2,yi-28+dy,5,4));
+    ctx.fillStyle='#F8D820';ctx.fillRect(xi-3,yi-32,6,6);
+  }else if(id==='tulip'){
+    ctx.fillStyle='#3A8820';ctx.fillRect(xi-1,yi-22,3,22);
+    ctx.fillStyle='#F0A020';ctx.fillRect(xi-4,yi-36,8,8);ctx.fillRect(xi-2,yi-40,5,6);
+    ctx.fillStyle='#D08010';ctx.fillRect(xi-4,yi-34,3,5);ctx.fillRect(xi+1,yi-34,3,5);
+  }else if(id==='sunflower'){
+    ctx.fillStyle='#4A9820';ctx.fillRect(xi-2,yi-24,4,24);
+    ctx.fillStyle='#F8C020';
+    for(let a=0;a<8;a++){ctx.fillRect(xi+Math.round(Math.cos(a*Math.PI/4)*9)-2,yi-36+Math.round(Math.sin(a*Math.PI/4)*9)-2,5,5);}
+    ctx.fillStyle='#6A3810';ctx.fillRect(xi-5,yi-40,10,10);
+    ctx.fillStyle='#7A4820';ctx.fillRect(xi-3,yi-38,6,6);
+  }else if(id==='rose'){
+    ctx.fillStyle='#2A7818';ctx.fillRect(xi-1,yi-22,3,22);
+    ctx.fillStyle='#3A9030';ctx.fillRect(xi-5,yi-18,5,4);
+    ctx.fillStyle='#C01030';ctx.fillRect(xi-5,yi-34,10,8);ctx.fillRect(xi-3,yi-38,6,6);ctx.fillRect(xi-1,yi-40,3,4);
+    ctx.fillStyle='#E01840';ctx.fillRect(xi-3,yi-36,6,4);ctx.fillRect(xi-1,yi-38,3,3);
+    ctx.fillStyle='#FF4060';ctx.fillRect(xi-1,yi-37,2,2);
+  }else if(id==='lavender'){
+    ctx.fillStyle='#3A8030';ctx.fillRect(xi-1,yi-22,3,22);
+    const pcs=['#8040C0','#9050D0','#A060E0','#7030B0'];
+    for(let p=0;p<8;p++){ctx.fillStyle=pcs[p%4];ctx.fillRect(xi-2+Math.floor(p/4)*4,yi-28-p*3,4,4);}
+  }else if(id==='orchid'){
+    ctx.fillStyle='#2A6820';ctx.fillRect(xi-1,yi-20,3,20);
+    ctx.fillStyle='#C040B0';ctx.fillRect(xi-7,yi-32,6,8);ctx.fillRect(xi+1,yi-32,6,8);ctx.fillRect(xi-3,yi-38,7,8);
+    ctx.fillStyle='#D860C8';ctx.fillRect(xi-4,yi-30,8,4);
+    ctx.fillStyle='#F0A0E8';ctx.fillRect(xi-1,yi-31,3,3);
+  }else if(id==='spud'){
+    ctx.fillStyle='#3A8020';ctx.fillRect(xi-1,yi-22,3,22);
+    ctx.fillStyle='#D4700E';ctx.fillRect(xi-7,yi-18,14,12);ctx.fillRect(xi-5,yi-22,10,6);ctx.fillRect(xi-4,yi-24,8,4);
+    ctx.fillStyle='#C05808';ctx.fillRect(xi-7,yi-18,4,12);
+    ctx.fillStyle='#F09040';ctx.fillRect(xi+2,yi-20,4,6);
+  }else if(id==='goldspud'){
+    ctx.fillStyle='#3A8020';ctx.fillRect(xi-1,yi-22,3,22);
+    ctx.fillStyle='#D4A010';ctx.fillRect(xi-7,yi-18,14,12);ctx.fillRect(xi-5,yi-22,10,6);ctx.fillRect(xi-4,yi-24,8,4);
+    ctx.fillStyle='#FFD700';ctx.fillRect(xi-7,yi-18,4,6);
+    ctx.fillStyle='#FFF080';ctx.fillRect(xi+2,yi-22,4,4);ctx.fillRect(xi-2,yi-25,5,3);
+  }else if(id==='ramp'){
+    // ramp: broad flat leaves like wild garlic
+    ctx.fillStyle='#2A6018';ctx.fillRect(xi-1,yi-24,3,24);
+    ctx.fillStyle='#3A8828';
+    ctx.fillRect(xi-9,yi-22,10,5); // left broad leaf
+    ctx.fillRect(xi-1,yi-20,10,5); // right broad leaf
+    ctx.fillRect(xi-7,yi-15,8,4);  // mid leaf
+    ctx.fillRect(xi,yi-13,8,4);
+    ctx.fillStyle='#4AA830';
+    ctx.fillRect(xi-9,yi-22,3,5);
+    ctx.fillRect(xi+1,yi-20,3,5);
+    // small white flower cluster on top
+    ctx.fillStyle='#F0F0F0';
+    ctx.fillRect(xi-3,yi-30,3,3);ctx.fillRect(xi+1,yi-28,3,3);ctx.fillRect(xi-1,yi-33,3,3);
+  }else if(id==='endive'){
+    // endive: pale yellowish-green tightly packed leaves
+    ctx.fillStyle='#2A6018';ctx.fillRect(xi-1,yi-24,3,24);
+    const ec=['#D4E880','#C8DC70','#BCCC60','#E0F090'];
+    // outer leaves fanning out
+    for(let l=0;l<5;l++){
+      ctx.fillStyle=ec[l%4];
+      const lx=xi-8+l*4, w=6, h=12+Math.abs(2-l)*2;
+      ctx.fillRect(lx,yi-22,w,h);
+    }
+    // inner tight leaves
+    ctx.fillStyle='#E8F8A0';
+    ctx.fillRect(xi-3,yi-28,6,10);ctx.fillRect(xi-2,yi-32,4,7);ctx.fillRect(xi-1,yi-35,3,5);
+    ctx.fillStyle='#F8FFD0';ctx.fillRect(xi-1,yi-34,2,4);
+  }
+}
+
+/* ══════════════════════════════
+   PWA — ICON + MANIFEST
+   ══════════════════════════════ */
+(function(){
+  const S=26,OFF=Math.round((512-16*S)/2);
+  const ic=document.createElement('canvas');ic.width=ic.height=512;
+  const ctx=ic.getContext('2d');
+  ctx.fillStyle='#4A9DC4';ctx.fillRect(0,0,512,512);
+  [[5,1,6,2,'#5ABE48'],[3,2,10,3,'#3A9030'],[2,3,12,3,'#226818'],
+   [3,5,10,2,'#2E7822'],[3,6,10,5,'#D4700E'],[2,7,12,4,'#C05808'],
+   [3,11,10,2,'#A04000'],[5,8,2,2,'#F39C12'],[9,9,2,2,'#F39C12'],[7,7,2,2,'#EAA020']
+  ].forEach(([x,y,w,h,c])=>{ctx.fillStyle=c;ctx.fillRect(OFF+x*S,OFF+y*S,w*S,h*S);});
+  const url=ic.toDataURL('image/png');
+  document.getElementById('pwa-icon').href=url;
+  const manifest=JSON.stringify({
+    name:'Sweet Potatoes by the River',short_name:'Sweet Potatoes',
+    start_url:'.',display:'standalone',background_color:'#4A9DC4',theme_color:'#4A9DC4',
+    icons:[{src:url,sizes:'512x512',type:'image/png',purpose:'any maskable'}]
+  });
+  const ml=document.createElement('link');ml.rel='manifest';
+  ml.href=URL.createObjectURL(new Blob([manifest],{type:'application/manifest+json'}));
+  document.head.appendChild(ml);
+})();
+</script>
+</body>
+</html>
